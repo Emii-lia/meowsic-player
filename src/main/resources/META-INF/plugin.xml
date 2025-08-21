@@ -16,10 +16,10 @@
             canCloseContents="false"
         />
     </extensions>
-    <applicationListeners>
+    <projectListeners>
         <listener
             class="com.github.emiilia.jetbrainmusicplayer.startup.PluginStartup"
-            topic="com.intellij.openapi.Disposable"
+            topic="com.intellij.openapi.project.ProjectManagerListener"
         />
-    </applicationListeners>
+    </projectListeners>
 </idea-plugin>
