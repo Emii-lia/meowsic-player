@@ -1,7 +1,7 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
     <id>com.github.emiilia.jetbrainmusicplayer</id>
-    <name>jetbrain-music-player</name>
+    <name>Jetbrain-Music-Player</name>
     <vendor>emii-lia</vendor>
 
     <depends>com.intellij.modules.platform</depends>
@@ -9,7 +9,17 @@
     <resource-bundle>messages.MyBundle</resource-bundle>
 
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow factoryClass="com.github.emiilia.jetbrainmusicplayer.toolWindow.MyToolWindowFactory" id="MyToolWindow"/>
-        <postStartupActivity implementation="com.github.emiilia.jetbrainmusicplayer.startup.MyProjectActivity" />
+        <toolWindow
+            id="MusicPlayer"
+            factoryClass="com.github.emiilia.jetbrainmusicplayer.toolWindow.MusicToolWindowFactory"
+            anchor="right"
+            canCloseContents="false"
+        />
     </extensions>
+    <applicationListeners>
+        <listener
+            class="com.github.emiilia.jetbrainmusicplayer.startup.PluginStartup"
+            topic="com.intellij.openapi.Disposable"
+        />
+    </applicationListeners>
 </idea-plugin>
