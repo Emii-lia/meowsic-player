@@ -3,7 +3,6 @@ package com.github.emiilia.jetbrainmusicplayer.utils
 import com.intellij.util.ui.JBUI
 import java.awt.Component
 import java.awt.Graphics
-import java.awt.Insets
 import javax.swing.border.Border
 
 class RoundedBorder: Border {

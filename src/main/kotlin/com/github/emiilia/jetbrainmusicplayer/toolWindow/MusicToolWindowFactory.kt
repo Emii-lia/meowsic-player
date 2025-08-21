@@ -23,7 +23,7 @@ class MusicToolWindowFactory: ToolWindowFactory {
 
         val panel = JPanel(BorderLayout())
 
-        val nowPlayingLabel = JLabel("${PlayerctlService.getNowPlaying()}")
+        val nowPlayingLabel = JLabel(PlayerctlService.getNowPlaying())
         nowPlayingLabel.apply {
             font = JBUI.Fonts.label().deriveFont(16f)
             horizontalAlignment = JLabel.CENTER
