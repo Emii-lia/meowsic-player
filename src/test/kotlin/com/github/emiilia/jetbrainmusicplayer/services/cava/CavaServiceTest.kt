@@ -1,7 +1,6 @@
 package com.github.emiilia.jetbrainmusicplayer.services.cava
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import org.junit.Test
 
 class CavaServiceTest : BasePlatformTestCase() {
     override fun setUp() {
