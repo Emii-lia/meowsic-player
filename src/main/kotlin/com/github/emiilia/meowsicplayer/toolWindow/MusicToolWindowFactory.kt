@@ -2,7 +2,6 @@ package com.github.emiilia.meowsicplayer.toolWindow
 
 import com.github.emiilia.meowsicplayer.services.cava.CavaService
 import com.github.emiilia.meowsicplayer.services.playerctl.PlayerctlService
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.IconLoader
 import com.intellij.openapi.wm.ToolWindow
