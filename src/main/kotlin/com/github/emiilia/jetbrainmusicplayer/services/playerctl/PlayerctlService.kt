@@ -11,7 +11,7 @@ object PlayerctlService : PlayerctlServiceInterface {
             BufferedReader(InputStreamReader(process.inputStream))
                 .readText().trim()
         } catch (e: Exception) {
-            "No playerctl found"
+            "No playerctl found. Please install it to use this feature."
         }
     }
     override fun getNowPlaying(): String = runCommand("metadata", "title")
