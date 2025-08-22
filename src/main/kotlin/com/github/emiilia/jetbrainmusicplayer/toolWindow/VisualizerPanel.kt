@@ -11,7 +11,7 @@ class VisualizerPanel: JPanel() {
     private val riseSpeed = 0.75
     private val fallSpeed = 0.3
 
-    fun updateBars(newBars: List<Int>) {
+    fun updateBars(newBars: List<Int>): List<Int> {
         if (displayedBars.isEmpty()) {
             displayedBars = newBars.map { it.toDouble() }.toMutableList()
         } else {
@@ -28,6 +28,7 @@ class VisualizerPanel: JPanel() {
         }
         bars = displayedBars.map { it.toInt() }
         repaint()
+        return bars
     }
 
     override fun paintComponent(g: Graphics) {
