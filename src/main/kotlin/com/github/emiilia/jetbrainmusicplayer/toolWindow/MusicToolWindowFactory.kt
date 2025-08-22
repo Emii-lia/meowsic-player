@@ -2,6 +2,7 @@ package com.github.emiilia.jetbrainmusicplayer.toolWindow
 
 import com.github.emiilia.jetbrainmusicplayer.services.cava.CavaService
 import com.github.emiilia.jetbrainmusicplayer.services.playerctl.PlayerctlService
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.IconLoader
 import com.intellij.openapi.wm.ToolWindow
@@ -11,6 +12,7 @@ import com.intellij.ui.content.ContentFactory
 import com.intellij.util.ui.JBUI
 import java.awt.BorderLayout
 import java.awt.Dimension
+import java.awt.FlowLayout
 import javax.swing.Icon
 import javax.swing.JButton
 import javax.swing.JLabel
@@ -19,6 +21,7 @@ import javax.swing.SwingUtilities
 
 class MusicToolWindowFactory: ToolWindowFactory {
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
+        if (ApplicationManager.getApplication().isHeadlessEnvironment) return
         CavaService.start()
 
         val panel = JPanel(BorderLayout())
@@ -30,6 +33,8 @@ class MusicToolWindowFactory: ToolWindowFactory {
             verticalAlignment = JLabel.CENTER
             border = JBUI.Borders.empty(10)
             size = Dimension(300, 50)
+            font = JBUI.Fonts.label().deriveFont(20f).asBold()
+            name = "NowPlayingLabel"
         }
         panel.add(nowPlayingLabel, BorderLayout.NORTH)
 
@@ -56,28 +61,35 @@ class MusicToolWindowFactory: ToolWindowFactory {
                 else -> musicIcon
             }
             size = Dimension(50, 50)
-            border = JBUI.Borders.empty(5)
+            border = JBUI.Borders.empty(10)
             background = JBColor.PINK
+            name = "PlayPauseButton"
         }
         playPauseButton.addActionListener { PlayerctlService.playPause() }
 
         nextButton.apply {
             icon = nextIcon
             size = Dimension(40, 40)
-            border = JBUI.Borders.empty(5)
+            border = JBUI.Borders.empty(10)
+            name = "NextButton"
         }
         nextButton.addActionListener { PlayerctlService.next() }
 
         prevButton.apply {
             icon = prevIcon
             size = Dimension(40, 40)
-            border = JBUI.Borders.empty(5)
+            border = JBUI.Borders.empty(10)
+            name = "PreviousButton"
         }
         prevButton.addActionListener { PlayerctlService.previous() }
 
         controls.add(prevButton)
         controls.add(playPauseButton)
         controls.add(nextButton)
+
+        controls.apply {
+            layout = FlowLayout(FlowLayout.CENTER, 5, 5)
+        }
         panel.add(controls, BorderLayout.SOUTH)
 
         val visualizerPanel = VisualizerPanel()
