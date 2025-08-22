@@ -1,4 +1,4 @@
-package com.github.emiilia.jetbrainmusicplayer.services.playerctl
+package com.github.emiilia.meowsicplayer.services.playerctl
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
