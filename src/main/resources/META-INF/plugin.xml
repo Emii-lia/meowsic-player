@@ -1,18 +1,37 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
     <id>com.github.emiilia.jetbrainmusicplayer</id>
-    <name>Jetbrain-Music-Player</name>
-    <vendor>emii-lia</vendor>
+    <name>Meowsic Player</name>
+    <description><![CDATA[
+      <p>Integrate music player and visualizer to your IDE based on "cava" and "playerctl"</p>
+      <p>Based on "cava" and "playerctl"</p>
+
+      <h2>Features</h2>
+      <ul>
+        <li>Track players and display the top first listed</li>
+        <li>Visualize audio</li>
+        <li>Control current player (play, pause, next, previous)</li>
+      </ul>
+
+      <h2>How to use</h2>
+      <p>The player daemon is using "playerctl" which is only available on Linux-based OS.</p>
+      <ul>
+        <li>Install <a href="https://github.com/karlstav/cava">cava</a></li>
+        <li>Install <a href="https://github.com/altdesktop/playerctl">playerctl</a></li>
+        <li>Open the player at the bottom toolbar and visualize and control music played on your system</li>
+      </ul>
+    ]]></description>
+
+    <vendor email="fiaromiangaly@gmail.com">emii-lia</vendor>
 
     <depends>com.intellij.modules.platform</depends>
-
-    <resource-bundle>messages.MyBundle</resource-bundle>
+    <depends>com.intellij.modules.os.linux</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <toolWindow
             id="MusicPlayer"
             factoryClass="com.github.emiilia.jetbrainmusicplayer.toolWindow.MusicToolWindowFactory"
-            anchor="right"
+            anchor="bottom"
             canCloseContents="false"
         />
     </extensions>
