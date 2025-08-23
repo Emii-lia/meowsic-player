@@ -1,4 +1,4 @@
-package com.github.emiilia.jetbrainmusicplayer.toolWindow
+package com.github.emiilia.meowsicplayer.toolWindow
 
 import com.intellij.ui.JBColor
 import java.awt.Graphics

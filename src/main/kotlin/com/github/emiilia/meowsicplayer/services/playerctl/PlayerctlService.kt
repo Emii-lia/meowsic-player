@@ -1,4 +1,4 @@
-package com.github.emiilia.jetbrainmusicplayer.services.playerctl
+package com.github.emiilia.meowsicplayer.services.playerctl
 
 import java.io.BufferedReader
 import java.io.InputStreamReader

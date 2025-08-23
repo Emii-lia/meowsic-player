@@ -1,6 +1,6 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
-    <id>com.github.emiilia.jetbrainmusicplayer</id>
+    <id>com.github.emiilia.meowsicplayer</id>
     <name>Meowsic Player</name>
     <description><![CDATA[
       <p>Integrate music player and visualizer to your IDE based on "cava" and "playerctl"</p>
@@ -30,14 +30,14 @@
     <extensions defaultExtensionNs="com.intellij">
         <toolWindow
             id="MusicPlayer"
-            factoryClass="com.github.emiilia.jetbrainmusicplayer.toolWindow.MusicToolWindowFactory"
+            factoryClass="com.github.emiilia.meowsicplayer.toolWindow.MusicToolWindowFactory"
             anchor="bottom"
             canCloseContents="false"
         />
     </extensions>
     <projectListeners>
         <listener
-            class="com.github.emiilia.jetbrainmusicplayer.startup.PluginStartup"
+            class="com.github.emiilia.meowsicplayer.startup.PluginStartup"
             topic="com.intellij.openapi.project.ProjectManagerListener"
         />
     </projectListeners>

@@ -1,6 +1,6 @@
-package com.github.emiilia.jetbrainmusicplayer.startup
+package com.github.emiilia.meowsicplayer.startup
 
-import com.github.emiilia.jetbrainmusicplayer.services.cava.CavaService
+import com.github.emiilia.meowsicplayer.services.cava.CavaService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManagerListener
 

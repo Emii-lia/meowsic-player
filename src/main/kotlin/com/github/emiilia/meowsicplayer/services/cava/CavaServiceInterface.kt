@@ -1,4 +1,4 @@
-package com.github.emiilia.jetbrainmusicplayer.services.cava
+package com.github.emiilia.meowsicplayer.services.cava
 
 interface CavaServiceInterface {
     fun start()
