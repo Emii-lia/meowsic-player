@@ -6,7 +6,6 @@
     <vendor email="fiaromiangaly@gmail.com" url="https://github.com/Emii-lia">Fiaro Miangaly</vendor>
 
     <depends>com.intellij.modules.platform</depends>
-    <depends>com.intellij.modules.os.linux</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <toolWindow
