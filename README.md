@@ -25,8 +25,12 @@ The player daemon is using "playerctl" which is only available on Linux-based OS
 This plugin uses the command line utilities [playerctl](https://github.com/altdesktop/playerctl) (Linux) to play music files ; and [cava](https://github.com/karlstav/cava) to display a visualizer.
 Please make sure that the respective utility is installed.
 
-Windows and MacOS are not supported at the moment.
+Windows and macOS are not supported at the moment.
 <!-- Plugin description end -->
+
+## Sreenshot
+
+![screenshot](./plugin_screenshot.png)
 
 ## Installation
 
@@ -47,9 +51,19 @@ Windows and MacOS are not supported at the moment.
   Download the [latest release](https://github.com/Emii-lia/jetbrain-music-player/releases/latest) and install it manually using
   <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Install plugin from disk...</kbd>
 
+## To Do
+- [ ] Support for Windows and macOS
+- [ ] More playback controls (seek, volume, etc.)
+- [ ] More visualizer options
+- [ ] Track info display (album art, track length, etc.)
+
+## Licence
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 Plugin based on the [IntelliJ Platform Plugin Template][template].
+
 
 [template]: https://github.com/JetBrains/intellij-platform-plugin-template
 [docs:plugin-description]: https://plugins.jetbrains.com/docs/intellij/plugin-user-experience.html#plugin-description-and-presentation
