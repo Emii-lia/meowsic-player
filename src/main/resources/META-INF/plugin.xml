@@ -2,27 +2,8 @@
 <idea-plugin>
     <id>com.github.emiilia.meowsicplayer</id>
     <name>Meowsic Player</name>
-    <description><![CDATA[
-      <p>Integrate music player and visualizer to your IDE based on "cava" and "playerctl"</p>
-      <p>Based on "cava" and "playerctl"</p>
-
-      <h2>Features</h2>
-      <ul>
-        <li>Track players and display the top first listed</li>
-        <li>Visualize audio</li>
-        <li>Control current player (play, pause, next, previous)</li>
-      </ul>
-
-      <h2>How to use</h2>
-      <p>The player daemon is using "playerctl" which is only available on Linux-based OS.</p>
-      <ul>
-        <li>Install <a href="https://github.com/karlstav/cava">cava</a></li>
-        <li>Install <a href="https://github.com/altdesktop/playerctl">playerctl</a></li>
-        <li>Open the player at the bottom toolbar and visualize and control music played on your system</li>
-      </ul>
-    ]]></description>
-
-    <vendor email="fiaromiangaly@gmail.com">emii-lia</vendor>
+    <version>REPLACED_BY_GRADLE</version>
+    <vendor email="fiaromiangaly@gmail.com" url="https://github.com/Emii-lia">Fiaro Miangaly</vendor>
 
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.os.linux</depends>
