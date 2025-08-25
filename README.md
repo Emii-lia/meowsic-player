@@ -5,13 +5,28 @@
 [![Downloads](https://img.shields.io/jetbrains/plugin/d/MARKETPLACE_ID.svg)](https://plugins.jetbrains.com/plugin/MARKETPLACE_ID)
 
 <!-- Plugin description -->
- 
-<!-- Plugin description end -->
+Integrate music player and visualizer to your IDE
+
+## Features
+- Track players and display the top first listed
+- Visualize audio
+- Control playback (play/pause, next/previous track)
+
+## Usage
+The player daemon is using "playerctl" which is only available on Linux-based OS.
+- Install the plugin
+- Make sure you have "playerctl" and "cava" installed
+- Open the music player tool window
+- Start playing music using your favorite music player (e.g. Spotify, VLC, etc.)
+- Enjoy the music and the visualizer!
 
 ## Requirements
 
 This plugin uses the command line utilities [playerctl](https://github.com/altdesktop/playerctl) (Linux) to play music files ; and [cava](https://github.com/karlstav/cava) to display a visualizer.
 Please make sure that the respective utility is installed.
+
+Windows and MacOS are not supported at the moment.
+<!-- Plugin description end -->
 
 ## Installation
 
