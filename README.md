@@ -1,12 +1,12 @@
-# Meowsic Player
+# jetbrain-music-player
 
 ![Build](https://github.com/Emii-lia/jetbrain-music-player/workflows/Build/badge.svg)
 [![Version](https://img.shields.io/jetbrains/plugin/v/MARKETPLACE_ID.svg)](https://plugins.jetbrains.com/plugin/MARKETPLACE_ID)
 [![Downloads](https://img.shields.io/jetbrains/plugin/d/MARKETPLACE_ID.svg)](https://plugins.jetbrains.com/plugin/MARKETPLACE_ID)
 
-## Description
-
-This plugin adds a music player to your IDE. It allows you to play, pause, skip tracks, and view a visualizer right within the IDE interface. The player supports various audio formats and integrates seamlessly with the IDE's UI.
+<!-- Plugin description -->
+ 
+<!-- Plugin description end -->
 
 ## Requirements
 
