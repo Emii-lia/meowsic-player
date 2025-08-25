@@ -13,6 +13,8 @@
             factoryClass="com.github.emiilia.meowsicplayer.toolWindow.MusicToolWindowFactory"
             anchor="bottom"
             canCloseContents="false"
+            icon="/META-INF/pluginIcon.svg"
+            secondary="false"
         />
     </extensions>
     <projectListeners>

@@ -2,6 +2,7 @@ package com.github.emiilia.meowsicplayer.toolWindow
 
 import com.github.emiilia.meowsicplayer.services.cava.CavaService
 import com.github.emiilia.meowsicplayer.services.playerctl.PlayerctlService
+import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.IconLoader
 import com.intellij.openapi.wm.ToolWindow
@@ -18,7 +19,7 @@ import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.SwingUtilities
 
-class MusicToolWindowFactory: ToolWindowFactory {
+class MusicToolWindowFactory: ToolWindowFactory, DumbAware {
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
         CavaService.start()
 
@@ -113,7 +114,7 @@ class MusicToolWindowFactory: ToolWindowFactory {
                     SwingUtilities.invokeLater {
                         visualizerPanel.updateBars(bars)
                     }
-                    Thread.sleep(100 / 30)
+                    Thread.sleep(100 / 45)
                 } catch (e: InterruptedException) {
                     break
                 }
