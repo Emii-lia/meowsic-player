@@ -1,8 +1,8 @@
 # jetbrain-music-player
 
 ![Build](https://github.com/Emii-lia/jetbrain-music-player/workflows/Build/badge.svg)
-[![Version](https://img.shields.io/jetbrains/plugin/v/MARKETPLACE_ID.svg)](https://plugins.jetbrains.com/plugin/MARKETPLACE_ID)
-[![Downloads](https://img.shields.io/jetbrains/plugin/d/MARKETPLACE_ID.svg)](https://plugins.jetbrains.com/plugin/MARKETPLACE_ID)
+[![Version](https://img.shields.io/jetbrains/plugin/v/28287-meowsic-player.svg)](https://plugins.jetbrains.com/plugin/28287-meowsic-player)
+[![Downloads](https://img.shields.io/jetbrains/plugin/d/28287-meowsic-player.svg)](https://plugins.jetbrains.com/plugin/28287-meowsic-player)
 
 <!-- Plugin description -->
 Integrate music player and visualizer to your IDE
