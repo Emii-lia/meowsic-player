@@ -17,9 +17,7 @@ import java.awt.Dimension
 import java.awt.FlowLayout
 import java.awt.event.KeyEvent
 import javax.swing.AbstractAction
-import javax.swing.ActionMap
 import javax.swing.Icon
-import javax.swing.InputMap
 import javax.swing.JButton
 import javax.swing.JComponent
 import javax.swing.JLabel
@@ -102,7 +100,7 @@ class MusicToolWindowFactory: ToolWindowFactory, DumbAware {
 
         setupKeyboardShortcuts(panel, playPauseButton, nextButton, prevButton)
         
-        val content = ContentFactory.getInstance().createContent(panel, "MusicPlayer", false)
+        val content = ContentFactory.getInstance().createContent(panel, "Meowsic Player", false)
         toolWindow.contentManager.addContent(content)
 
         val disposable = Disposer.newDisposable("MusicPlayerToolWindow")
@@ -119,7 +117,7 @@ class MusicToolWindowFactory: ToolWindowFactory, DumbAware {
                     else -> musicIcon
                 }
             } catch (e: Exception) {
-                nowPlayingLabel.text = "Music Player"
+                nowPlayingLabel.text = "Meowsic Player"
                 playPauseButton.icon = musicIcon
             }
         }
