@@ -21,30 +21,22 @@
     <actions resource-bundle="messages.MeowsicPlayerBundle">
         <group id="MeowsicPlayer.Controls" popup="false">
             <action id="MeowsicPlayer.PlayPause" 
-                    class="com.github.emiilia.meowsicplayer.actions.PlayPauseAction"
-                    text="Action.MeowsicPlayer.PlayPause.Text"
-                    description="Action.meowsicPlayer.playPause.description">
+                    class="com.github.emiilia.meowsicplayer.actions.PlayPauseAction">
                 <keyboard-shortcut keymap="$default" first-keystroke="shift SPACE"/>
             </action>
             
             <action id="MeowsicPlayer.NextTrack"
-                    text="Action.MeowsicPlayer.NextTrack.Text"
-                    description="Action.meowsicPlayer.nextTrack.text"
                     class="com.github.emiilia.meowsicplayer.actions.NextTrackAction">
                 <keyboard-shortcut keymap="$default" first-keystroke="shift PERIOD"/>
             </action>
             
             <action id="MeowsicPlayer.PreviousTrack" 
-                    class="com.github.emiilia.meowsicplayer.actions.PreviousTrackAction"
-                    text="Action.MeowsicPlayer.PreviousTrack.Text"
-                    description="Action.meowsicPlayer.previousTrack.description">
+                    class="com.github.emiilia.meowsicplayer.actions.PreviousTrackAction">
                 <keyboard-shortcut keymap="$default" first-keystroke="shift COMMA"/>
             </action>
             
             <action id="MeowsicPlayer.ShowHide" 
-                    class="com.github.emiilia.meowsicplayer.actions.ShowMusicPlayerAction"
-                    text="Action.MeowsicPlayer.ShowHide.Text"
-                    description="Action.meowsicPlayer.showHide.description">
+                    class="com.github.emiilia.meowsicplayer.actions.ShowMusicPlayerAction">
                 <keyboard-shortcut keymap="$default" first-keystroke="shift W"/>
             </action>
             
