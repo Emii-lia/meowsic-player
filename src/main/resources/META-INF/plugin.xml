@@ -27,12 +27,12 @@
             
             <action id="MeowsicPlayer.NextTrack"
                     class="com.github.emiilia.meowsicplayer.actions.NextTrackAction">
-                <keyboard-shortcut keymap="$default" first-keystroke="shift PERIOD"/>
+                <keyboard-shortcut keymap="$default" first-keystroke="alt PERIOD"/>
             </action>
             
             <action id="MeowsicPlayer.PreviousTrack" 
                     class="com.github.emiilia.meowsicplayer.actions.PreviousTrackAction">
-                <keyboard-shortcut keymap="$default" first-keystroke="shift COMMA"/>
+                <keyboard-shortcut keymap="$default" first-keystroke="alt COMMA"/>
             </action>
             
             <action id="MeowsicPlayer.ShowHide" 
