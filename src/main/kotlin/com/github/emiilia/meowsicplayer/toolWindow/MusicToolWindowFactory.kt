@@ -127,6 +127,7 @@ class MusicToolWindowFactory: ToolWindowFactory, DumbAware {
                 val bars = CavaService.readBars()
                 visualizerPanel.updateBars(bars)
             } catch (e: Exception) {
+                println("Error updating visualizer: ${e.message}")
             }
         }
         
