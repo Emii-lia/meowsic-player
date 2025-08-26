@@ -9,7 +9,7 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <toolWindow
-            id="MusicPlayer"
+            id="Meowsic Player"
             factoryClass="com.github.emiilia.meowsicplayer.toolWindow.MusicToolWindowFactory"
             anchor="bottom"
             canCloseContents="false"
@@ -18,33 +18,33 @@
         />
     </extensions>
 
-    <actions>
-        <group id="MeowsicPlayer.Controls" text="Music Player Controls" popup="false">
+    <actions resource-bundle="messages.MeowsicPlayerBundle">
+        <group id="MeowsicPlayer.Controls" popup="false">
             <action id="MeowsicPlayer.PlayPause" 
                     class="com.github.emiilia.meowsicplayer.actions.PlayPauseAction"
-                    text="Play/Pause Music" 
-                    description="Toggle music playback">
+                    text="Action.MeowsicPlayer.PlayPause.Text"
+                    description="Action.meowsicPlayer.playPause.description">
                 <keyboard-shortcut keymap="$default" first-keystroke="shift SPACE"/>
             </action>
             
-            <action id="MeowsicPlayer.NextTrack" 
-                    class="com.github.emiilia.meowsicplayer.actions.NextTrackAction"
-                    text="Next Track" 
-                    description="Skip to next track">
+            <action id="MeowsicPlayer.NextTrack"
+                    text="Action.MeowsicPlayer.NextTrack.Text"
+                    description="Action.meowsicPlayer.nextTrack.text"
+                    class="com.github.emiilia.meowsicplayer.actions.NextTrackAction">
                 <keyboard-shortcut keymap="$default" first-keystroke="shift PERIOD"/>
             </action>
             
             <action id="MeowsicPlayer.PreviousTrack" 
                     class="com.github.emiilia.meowsicplayer.actions.PreviousTrackAction"
-                    text="Previous Track" 
-                    description="Skip to previous track">
+                    text="Action.MeowsicPlayer.PreviousTrack.Text"
+                    description="Action.meowsicPlayer.previousTrack.description">
                 <keyboard-shortcut keymap="$default" first-keystroke="shift COMMA"/>
             </action>
             
             <action id="MeowsicPlayer.ShowHide" 
                     class="com.github.emiilia.meowsicplayer.actions.ShowMusicPlayerAction"
-                    text="Show/Hide Music Player" 
-                    description="Toggle Music Player tool window visibility">
+                    text="Action.MeowsicPlayer.ShowHide.Text"
+                    description="Action.meowsicPlayer.showHide.description">
                 <keyboard-shortcut keymap="$default" first-keystroke="shift W"/>
             </action>
             
