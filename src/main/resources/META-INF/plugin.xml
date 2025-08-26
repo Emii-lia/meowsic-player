@@ -17,6 +17,41 @@
             secondary="false"
         />
     </extensions>
+
+    <actions>
+        <group id="MeowsicPlayer.Controls" text="Music Player Controls" popup="false">
+            <action id="MeowsicPlayer.PlayPause" 
+                    class="com.github.emiilia.meowsicplayer.actions.PlayPauseAction"
+                    text="Play/Pause Music" 
+                    description="Toggle music playback">
+                <keyboard-shortcut keymap="$default" first-keystroke="shift SPACE"/>
+            </action>
+            
+            <action id="MeowsicPlayer.NextTrack" 
+                    class="com.github.emiilia.meowsicplayer.actions.NextTrackAction"
+                    text="Next Track" 
+                    description="Skip to next track">
+                <keyboard-shortcut keymap="$default" first-keystroke="shift PERIOD"/>
+            </action>
+            
+            <action id="MeowsicPlayer.PreviousTrack" 
+                    class="com.github.emiilia.meowsicplayer.actions.PreviousTrackAction"
+                    text="Previous Track" 
+                    description="Skip to previous track">
+                <keyboard-shortcut keymap="$default" first-keystroke="shift COMMA"/>
+            </action>
+            
+            <action id="MeowsicPlayer.ShowHide" 
+                    class="com.github.emiilia.meowsicplayer.actions.ShowMusicPlayerAction"
+                    text="Show/Hide Music Player" 
+                    description="Toggle Music Player tool window visibility">
+                <keyboard-shortcut keymap="$default" first-keystroke="shift W"/>
+            </action>
+            
+            <add-to-group group-id="ViewMenu" anchor="last"/>
+            <add-to-group group-id="MainToolBar" anchor="last"/>
+        </group>
+    </actions>
     <projectListeners>
         <listener
             class="com.github.emiilia.meowsicplayer.startup.PluginStartup"
