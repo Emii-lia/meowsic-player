@@ -92,9 +92,9 @@ class MacosPlayerService: PlayerctlServiceInterface {
             end tell
         """.trimIndent()
 
-        var result = runAppleScript(musicScript)
+        val result = runAppleScript(musicScript)
         if (result.isBlank() || result.contains("execution failed")) {
-            result = runAppleScript(spotifyScript)
+            runAppleScript(spotifyScript)
         }
         
         return ""
@@ -131,9 +131,9 @@ class MacosPlayerService: PlayerctlServiceInterface {
             end tell
         """.trimIndent()
 
-        var result = runAppleScript(musicScript)
+        val result = runAppleScript(musicScript)
         if (result.isBlank() || result.contains("execution failed")) {
-            result = runAppleScript(spotifyScript)
+            runAppleScript(spotifyScript)
         }
         
         return ""
@@ -170,9 +170,9 @@ class MacosPlayerService: PlayerctlServiceInterface {
             end tell
         """.trimIndent()
 
-        var result = runAppleScript(musicScript)
+        val result = runAppleScript(musicScript)
         if (result.isBlank() || result.contains("execution failed")) {
-            result = runAppleScript(spotifyScript)
+            runAppleScript(spotifyScript)
         }
         
         return ""

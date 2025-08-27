@@ -18,7 +18,7 @@ class PlayPauseAction : AnAction(), DumbAware {
         val status = try {
             CrossPlatformPlayerService.getStatus()
         } catch (ex: Exception) {
-            "Unknown"
+            "Unknown: ${ex.message}"
         }
         
         e.presentation.text = when (status) {

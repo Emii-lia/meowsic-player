@@ -1,6 +1,5 @@
 package com.github.emiilia.meowsicplayer.services.playerctl
 
-import com.github.emiilia.meowsicplayer.services.playerctl.CrossPlatformPlayerService
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 class PlayerctlServiceTest: BasePlatformTestCase() {
