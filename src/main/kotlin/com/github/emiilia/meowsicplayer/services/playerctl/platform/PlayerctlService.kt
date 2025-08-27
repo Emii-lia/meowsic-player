@@ -1,9 +1,10 @@
-package com.github.emiilia.meowsicplayer.services.playerctl
+package com.github.emiilia.meowsicplayer.services.playerctl.platform
 
+import com.github.emiilia.meowsicplayer.services.playerctl.PlayerctlServiceInterface
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
-object PlayerctlService : PlayerctlServiceInterface {
+class PlayerctlService : PlayerctlServiceInterface {
     private fun runCommand(vararg args: String): String {
         return try {
             val process = ProcessBuilder("playerctl", *args)
