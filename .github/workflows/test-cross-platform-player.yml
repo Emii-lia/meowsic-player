@@ -1,0 +1,62 @@
+name: Cross-Platform Testing
+
+on:
+  push:
+    branches: [ main, 'feat/**', 'fix/**' ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        java: [21]
+      fail-fast: false
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK ${{ matrix.java }}
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ matrix.java }}
+        distribution: 'temurin'
+
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v3
+
+    - name: Install Linux dependencies
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y playerctl cava
+
+    - name: Verify platform detection
+      run: |
+        echo "Testing on ${{ runner.os }}"
+        java -version
+
+    - name: Run tests
+      run: ./gradlew test --no-daemon
+
+    - name: Build plugin
+      run: ./gradlew buildPlugin --no-daemon
+
+    - name: Verify plugin compatibility
+      run: ./gradlew verifyPlugin --no-daemon
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results-${{ matrix.os }}
+        path: build/reports/tests/
+
+    - name: Upload plugin artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: plugin-${{ matrix.os }}
+        path: build/distributions/
