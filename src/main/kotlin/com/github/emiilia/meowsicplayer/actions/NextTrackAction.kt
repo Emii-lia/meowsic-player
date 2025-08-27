@@ -1,6 +1,6 @@
 package com.github.emiilia.meowsicplayer.actions
 
-import com.github.emiilia.meowsicplayer.services.playerctl.PlayerctlService
+import com.github.emiilia.meowsicplayer.services.playerctl.CrossPlatformPlayerService
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -11,7 +11,7 @@ class NextTrackAction : AnAction(), DumbAware {
     override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
     
     override fun actionPerformed(e: AnActionEvent) {
-        PlayerctlService.next()
+        CrossPlatformPlayerService.next()
     }
     
     override fun update(e: AnActionEvent) {

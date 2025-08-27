@@ -4,23 +4,23 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 class PlayerctlServiceTest: BasePlatformTestCase() {
     fun testGetNowPlayingAlwaysReturnsAString() {
-        val nowPlaying = PlayerctlService.getNowPlaying()
+        val nowPlaying = CrossPlatformPlayerService.getNowPlaying()
         assertTrue(nowPlaying.isNotEmpty())
     }
     fun testPlayPauseReturnsAString() {
-        val playPause = PlayerctlService.playPause()
+        val playPause = CrossPlatformPlayerService.playPause()
         assertNotNull(playPause)
     }
     fun testNextReturnsEmptyString() {
-        val next = PlayerctlService.next()
+        val next = CrossPlatformPlayerService.next()
         assertNotNull(next)
     }
     fun testPreviousReturnsEmptyString() {
-        val previous = PlayerctlService.previous()
+        val previous = CrossPlatformPlayerService.previous()
         assertNotNull(previous)
     }
     fun testGetStatusReturnsString() {
-        val status = PlayerctlService.getStatus()
+        val status = CrossPlatformPlayerService.getStatus()
         assertTrue(status.isNotEmpty())
     }
 }

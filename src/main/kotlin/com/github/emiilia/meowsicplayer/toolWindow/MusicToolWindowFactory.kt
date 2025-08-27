@@ -1,7 +1,7 @@
 package com.github.emiilia.meowsicplayer.toolWindow
 
 import com.github.emiilia.meowsicplayer.services.cava.CavaService
-import com.github.emiilia.meowsicplayer.services.playerctl.PlayerctlService
+import com.github.emiilia.meowsicplayer.services.playerctl.CrossPlatformPlayerService
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
@@ -30,7 +30,7 @@ class MusicToolWindowFactory: ToolWindowFactory, DumbAware {
 
         val panel = JPanel(BorderLayout())
 
-        val nowPlayingLabel = JLabel(PlayerctlService.getNowPlaying())
+        val nowPlayingLabel = JLabel(CrossPlatformPlayerService.getNowPlaying())
         nowPlayingLabel.apply {
             font = JBUI.Fonts.label().deriveFont(16f)
             horizontalAlignment = JLabel.CENTER
@@ -58,7 +58,7 @@ class MusicToolWindowFactory: ToolWindowFactory, DumbAware {
         val prevIcon = loadIcon("/assets/icons/prev.svg")
 
         playPauseButton.apply {
-            icon = when (PlayerctlService.getStatus()) {
+            icon = when (CrossPlatformPlayerService.getStatus()) {
                 "Playing" -> pauseIcon
                 "Paused" -> playIcon
                 else -> musicIcon
@@ -68,7 +68,7 @@ class MusicToolWindowFactory: ToolWindowFactory, DumbAware {
             background = JBColor.PINK
             name = "PlayPauseButton"
         }
-        playPauseButton.addActionListener { PlayerctlService.playPause() }
+        playPauseButton.addActionListener { CrossPlatformPlayerService.playPause() }
 
         nextButton.apply {
             icon = nextIcon
@@ -76,7 +76,7 @@ class MusicToolWindowFactory: ToolWindowFactory, DumbAware {
             border = JBUI.Borders.empty(10)
             name = "NextButton"
         }
-        nextButton.addActionListener { PlayerctlService.next() }
+        nextButton.addActionListener { CrossPlatformPlayerService.next() }
 
         prevButton.apply {
             icon = prevIcon
@@ -84,7 +84,7 @@ class MusicToolWindowFactory: ToolWindowFactory, DumbAware {
             border = JBUI.Borders.empty(10)
             name = "PreviousButton"
         }
-        prevButton.addActionListener { PlayerctlService.previous() }
+        prevButton.addActionListener { CrossPlatformPlayerService.previous() }
 
         controls.add(prevButton)
         controls.add(playPauseButton)
@@ -107,8 +107,8 @@ class MusicToolWindowFactory: ToolWindowFactory, DumbAware {
         
         val playerUpdateTimer = Timer(1000) {
             try {
-                val title = PlayerctlService.getNowPlaying()
-                val status = PlayerctlService.getStatus()
+                val title = CrossPlatformPlayerService.getNowPlaying()
+                val status = CrossPlatformPlayerService.getStatus()
                 
                 nowPlayingLabel.text = "Now Playing: $title"
                 playPauseButton.icon = when (status) {

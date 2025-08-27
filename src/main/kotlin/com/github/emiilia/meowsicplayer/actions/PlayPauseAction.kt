@@ -1,6 +1,6 @@
 package com.github.emiilia.meowsicplayer.actions
 
-import com.github.emiilia.meowsicplayer.services.playerctl.PlayerctlService
+import com.github.emiilia.meowsicplayer.services.playerctl.CrossPlatformPlayerService
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -11,14 +11,14 @@ class PlayPauseAction : AnAction(), DumbAware {
     override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
     
     override fun actionPerformed(e: AnActionEvent) {
-        PlayerctlService.playPause()
+        CrossPlatformPlayerService.playPause()
     }
     
     override fun update(e: AnActionEvent) {
         val status = try {
-            PlayerctlService.getStatus()
+            CrossPlatformPlayerService.getStatus()
         } catch (ex: Exception) {
-            "Unknown"
+            "Unknown: ${ex.message}"
         }
         
         e.presentation.text = when (status) {
