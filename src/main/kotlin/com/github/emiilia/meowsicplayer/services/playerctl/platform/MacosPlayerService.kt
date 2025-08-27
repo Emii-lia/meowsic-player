@@ -224,7 +224,7 @@ class MacosPlayerService: PlayerctlServiceInterface {
         var result = runAppleScript(musicScript)
         if (result.isBlank() || result.contains("execution failed") || result == "Stopped") {
             val spotifyResult = runAppleScript(spotifyScript)
-            if (!spotifyResult.isBlank() && !spotifyResult.contains("execution failed") && spotifyResult != "Stopped") {
+            if (spotifyResult.isNotBlank() && !spotifyResult.contains("execution failed") && spotifyResult != "Stopped") {
                 result = spotifyResult
             }
         }
