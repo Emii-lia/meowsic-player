@@ -19,7 +19,7 @@ import java.awt.event.KeyEvent
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import java.awt.image.BufferedImage
-import java.net.URL
+import java.net.URI
 import javax.imageio.ImageIO
 import java.util.concurrent.CompletableFuture
 
@@ -227,13 +227,11 @@ class MusicToolWindowFactory: ToolWindowFactory, DumbAware {
             return
         }
         
-        // Load album art asynchronously to avoid blocking the UI
         CompletableFuture.supplyAsync {
             try {
-                val url = URL(albumArtUrl)
-                val originalImage = ImageIO.read(url)
+                val uri = URI.create(albumArtUrl)
+                val originalImage = ImageIO.read(uri.toURL())
                 
-                // Scale image to fit the label size (120x120)
                 val scaledImage = BufferedImage(120, 120, BufferedImage.TYPE_INT_ARGB)
                 val g2d = scaledImage.createGraphics()
                 g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR)
@@ -243,7 +241,7 @@ class MusicToolWindowFactory: ToolWindowFactory, DumbAware {
                 ImageIcon(scaledImage)
             } catch (e: Exception) {
                 println("Failed to load album art from $albumArtUrl: ${e.message}")
-                musicIcon // Fallback to default icon
+                musicIcon
             }
         }.thenAcceptAsync({ icon ->
             SwingUtilities.invokeLater {
@@ -276,9 +274,8 @@ class MusicToolWindowFactory: ToolWindowFactory, DumbAware {
                 playerInfoCard.artistLabel.text = metadata.getDisplayArtist()
                 playerInfoCard.playPauseButton.icon = getIconForStatus(status)
                 
-                // Load album art asynchronously
                 loadAlbumArt(metadata.albumArtUrl, playerInfoCard.albumArtLabel)
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 playerInfoCard.trackLabel.text = "Meowsic Player"
                 playerInfoCard.artistLabel.text = "No track playing"
                 playerInfoCard.playPauseButton.icon = playIcon

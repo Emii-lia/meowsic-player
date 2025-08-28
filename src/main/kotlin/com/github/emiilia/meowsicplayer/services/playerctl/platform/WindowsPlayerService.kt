@@ -118,7 +118,7 @@ class WindowsPlayerService: PlayerctlServiceInterface {
             } else {
                 TrackMetadata()
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             TrackMetadata()
         }
     }

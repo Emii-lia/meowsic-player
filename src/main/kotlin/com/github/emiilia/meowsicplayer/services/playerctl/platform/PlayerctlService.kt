@@ -13,7 +13,7 @@ class PlayerctlService : PlayerctlServiceInterface {
             BufferedReader(InputStreamReader(process.inputStream))
                 .readText().trim()
         } catch (e: Exception) {
-            ""
+            "playerctl command failed: ${e.message}"
         }
     }
     
@@ -32,8 +32,8 @@ class PlayerctlService : PlayerctlServiceInterface {
                 album = album,
                 albumArtUrl = albumArt
             )
-        } catch (e: Exception) {
-            TrackMetadata() // Return default metadata if playerctl fails
+        } catch (_: Exception) {
+            TrackMetadata()
         }
     }
 
