@@ -18,6 +18,10 @@ import java.awt.*
 import java.awt.event.KeyEvent
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
+import java.awt.image.BufferedImage
+import java.net.URL
+import javax.imageio.ImageIO
+import java.util.concurrent.CompletableFuture
 
 class MusicToolWindowFactory: ToolWindowFactory, DumbAware {
     private lateinit var playIcon: Icon
@@ -50,14 +54,14 @@ class MusicToolWindowFactory: ToolWindowFactory, DumbAware {
     private fun createMainPanel(project: Project): JPanel {
         val mainPanel = JBPanel<JBPanel<*>>(BorderLayout()).apply {
             background = UIUtil.getPanelBackground()
-            border = JBUI.Borders.empty(15, 20, 15, 20)
+            border = JBUI.Borders.empty(15, 20)
         }
         
         val splitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT).apply {
             background = UIUtil.getPanelBackground()
             border = null
-            dividerSize = 1
-            resizeWeight = 0.5
+            dividerSize = 0
+            resizeWeight = 0.33
         }
         
         val playerInfoCard = createPlayerInfoCard()
@@ -89,7 +93,7 @@ class MusicToolWindowFactory: ToolWindowFactory, DumbAware {
             background = UIUtil.getPanelBackground()
             border = BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(JBColor.border(), 1),
-                JBUI.Borders.empty(20, 15, 20, 15)
+                JBUI.Borders.empty(20, 15)
             )
         }
         
@@ -146,21 +150,21 @@ class MusicToolWindowFactory: ToolWindowFactory, DumbAware {
             gridy = 0
             anchor = GridBagConstraints.CENTER
             fill = GridBagConstraints.NONE
-            insets = JBUI.insets(0, 0, 15, 0)
+            insets = JBUI.insetsBottom(15)
         }
         
         cardPanel.add(albumArtLabel, gbc)
         
         gbc.gridy = 1
-        gbc.insets = JBUI.insets(0, 0, 8, 0)
+        gbc.insets = JBUI.insetsBottom(8)
         cardPanel.add(trackLabel, gbc)
         
         gbc.gridy = 2
-        gbc.insets = JBUI.insets(0, 0, 20, 0)
+        gbc.insets = JBUI.insetsBottom(20)
         cardPanel.add(artistLabel, gbc)
         
         gbc.gridy = 3
-        gbc.insets = JBUI.insets(0)
+        gbc.insets = JBUI.emptyInsets()
         cardPanel.add(controlsPanel, gbc)
         
         return PlayerInfoCard(cardPanel, albumArtLabel, trackLabel, artistLabel, playPauseButton, nextButton, prevButton)
@@ -170,7 +174,7 @@ class MusicToolWindowFactory: ToolWindowFactory, DumbAware {
         return VisualizerPanel().apply {
             preferredSize = Dimension(-1, 120)
             minimumSize = Dimension(200, 120)
-            background = UIUtil.getPanelBackground()
+            background = UIUtil.getPanelBackground().darker()
             border = BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(JBColor.border(), 1),
                 JBUI.Borders.empty(10)
@@ -194,29 +198,58 @@ class MusicToolWindowFactory: ToolWindowFactory, DumbAware {
                 override fun mouseEntered(e: MouseEvent) {
                     isContentAreaFilled = true
                     background = if (getClientProperty("PlayPauseButton") == true) {
-                        JBColor(Color(0x6FA16C), Color(0x6FA16C))
+                        JBColor(JBColor.PINK.darker(), JBColor.PINK)
                     } else {
                         JBColor(Color(0x5C6164), Color(0x5C6164))
                     }
                 }
                 
                 override fun mouseExited(e: MouseEvent) {
-                    background = if (getClientProperty("PlayPauseButton") == true) {
-                        JBColor(Color(0x5E8F5A), Color(0x5E8F5A))
-                    } else {
-                        JBColor(Color(0x4C5052), Color(0x4C5052))
-                    }
+                    background = UIUtil.getPanelBackground()
                 }
                 
                 override fun mousePressed(e: MouseEvent) {
                     background = if (getClientProperty("PlayPauseButton") == true) {
-                        JBColor(Color(0x4D7D4A), Color(0x4D7D4A))
+                        JBColor(JBColor.PINK.darker().darker(), JBColor.PINK.darker())
                     } else {
                         JBColor(Color(0x3C4143), Color(0x3C4143))
                     }
                 }
             })
         }
+    }
+    
+    private fun loadAlbumArt(albumArtUrl: String, albumArtLabel: JLabel) {
+        if (albumArtUrl.isBlank()) {
+            SwingUtilities.invokeLater {
+                albumArtLabel.icon = musicIcon
+            }
+            return
+        }
+        
+        // Load album art asynchronously to avoid blocking the UI
+        CompletableFuture.supplyAsync {
+            try {
+                val url = URL(albumArtUrl)
+                val originalImage = ImageIO.read(url)
+                
+                // Scale image to fit the label size (120x120)
+                val scaledImage = BufferedImage(120, 120, BufferedImage.TYPE_INT_ARGB)
+                val g2d = scaledImage.createGraphics()
+                g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR)
+                g2d.drawImage(originalImage, 0, 0, 120, 120, null)
+                g2d.dispose()
+                
+                ImageIcon(scaledImage)
+            } catch (e: Exception) {
+                println("Failed to load album art from $albumArtUrl: ${e.message}")
+                musicIcon // Fallback to default icon
+            }
+        }.thenAcceptAsync({ icon ->
+            SwingUtilities.invokeLater {
+                albumArtLabel.icon = icon
+            }
+        }, SwingUtilities::invokeLater)
     }
     
     private fun getIconForStatus(status: String): Icon {
@@ -236,23 +269,20 @@ class MusicToolWindowFactory: ToolWindowFactory, DumbAware {
         
         val playerUpdateTimer = Timer(1000) {
             try {
-                val nowPlaying = CrossPlatformPlayerService.getNowPlaying()
+                val metadata = CrossPlatformPlayerService.getMetadata()
                 val status = CrossPlatformPlayerService.getStatus()
                 
-                val parts = nowPlaying.split(" - ", limit = 2)
-                if (parts.size == 2) {
-                    playerInfoCard.artistLabel.text = parts[0]
-                    playerInfoCard.trackLabel.text = parts[1]
-                } else {
-                    playerInfoCard.trackLabel.text = nowPlaying
-                    playerInfoCard.artistLabel.text = "Unknown Artist"
-                }
-                
+                playerInfoCard.trackLabel.text = metadata.getDisplayTitle()
+                playerInfoCard.artistLabel.text = metadata.getDisplayArtist()
                 playerInfoCard.playPauseButton.icon = getIconForStatus(status)
+                
+                // Load album art asynchronously
+                loadAlbumArt(metadata.albumArtUrl, playerInfoCard.albumArtLabel)
             } catch (e: Exception) {
                 playerInfoCard.trackLabel.text = "Meowsic Player"
                 playerInfoCard.artistLabel.text = "No track playing"
                 playerInfoCard.playPauseButton.icon = playIcon
+                playerInfoCard.albumArtLabel.icon = musicIcon
             }
         }
         
