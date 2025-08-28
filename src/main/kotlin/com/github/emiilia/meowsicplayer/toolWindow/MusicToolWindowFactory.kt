@@ -116,12 +116,18 @@ class MusicToolWindowFactory: ToolWindowFactory, DumbAware {
             font = JBUI.Fonts.label().deriveFont(16f).asBold()
             foreground = UIUtil.getLabelForeground()
             horizontalAlignment = JLabel.CENTER
+            verticalAlignment = JLabel.CENTER
+            border = JBUI.Borders.empty(5, 15)
+            preferredSize = Dimension(-1, 40)
         }
         
         val artistLabel = JLabel("No artist").apply {
             font = JBUI.Fonts.label().deriveFont(12f)
             foreground = UIUtil.getContextHelpForeground()
             horizontalAlignment = JLabel.CENTER
+            verticalAlignment = JLabel.CENTER
+            border = JBUI.Borders.empty(0, 15, 5, 15)
+            preferredSize = Dimension(-1, 25)
         }
         
         val prevButton = createStyledButton(prevIcon, 32, 32, "Previous Track")
@@ -250,6 +256,14 @@ class MusicToolWindowFactory: ToolWindowFactory, DumbAware {
         }, SwingUtilities::invokeLater)
     }
     
+    private fun truncateText(text: String, maxLength: Int = 30): String {
+        return if (text.length > maxLength) {
+            text.take(maxLength - 3) + "..."
+        } else {
+            text
+        }
+    }
+    
     private fun getIconForStatus(status: String): Icon {
         return when (status) {
             "Playing" -> pauseIcon
@@ -270,8 +284,8 @@ class MusicToolWindowFactory: ToolWindowFactory, DumbAware {
                 val metadata = CrossPlatformPlayerService.getMetadata()
                 val status = CrossPlatformPlayerService.getStatus()
                 
-                playerInfoCard.trackLabel.text = metadata.getDisplayTitle()
-                playerInfoCard.artistLabel.text = metadata.getDisplayArtist()
+                playerInfoCard.trackLabel.text = truncateText(metadata.getDisplayTitle(), 60)
+                playerInfoCard.artistLabel.text = truncateText(metadata.getDisplayArtist(), 30)
                 playerInfoCard.playPauseButton.icon = getIconForStatus(status)
                 
                 loadAlbumArt(metadata.albumArtUrl, playerInfoCard.albumArtLabel)
