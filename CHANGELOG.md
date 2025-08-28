@@ -2,21 +2,20 @@
 
 # jetbrain-music-player Changelog
 
-## [Unreleased]
-
-## [1.0.0-beta] - 2025-08-27
+## [1.0.0-beta] - 2025-08-28
 ### Added
 - **Cross-platform support** for Windows, macOS, and Linux
 - Windows integration using PowerShell and Global System Media Transport Controls
 - macOS integration using AppleScript for Music and Spotify applications
-- Factory pattern for platform-specific service creation
+- **Structured track metadata**
+- **Album art display** with automatic image loading and scaling
+- Comprehensive metadata retrieval (title, artist, album, artwork URL)
 - Platform detection utility for automatic OS identification
 
 ### Changed
+- **Major UI redesign** with modern card-based layout
 - Refactored player service architecture for cross-platform compatibility
-- Introduced `CrossPlatformPlayerService` as unified interface
-- Moved Linux playerctl implementation to platform-specific module
-- Updated all existing code to use cross-platform service
+- **Vertical player info card** with integrated playback controls
 
 ### Fixed
 - PowerShell variable syntax issues in Windows implementation

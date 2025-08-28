@@ -10,115 +10,276 @@ import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.ui.JBColor
 import com.intellij.ui.content.ContentFactory
+import com.intellij.ui.components.JBPanel
 import com.intellij.util.ui.JBUI
-import javax.swing.Timer
-import java.awt.BorderLayout
-import java.awt.Dimension
-import java.awt.FlowLayout
+import com.intellij.util.ui.UIUtil
+import javax.swing.*
+import java.awt.*
 import java.awt.event.KeyEvent
-import javax.swing.AbstractAction
-import javax.swing.Icon
-import javax.swing.JButton
-import javax.swing.JComponent
-import javax.swing.JLabel
-import javax.swing.JPanel
-import javax.swing.KeyStroke
+import java.awt.event.MouseAdapter
+import java.awt.event.MouseEvent
+import java.awt.image.BufferedImage
+import java.net.URI
+import javax.imageio.ImageIO
+import java.util.concurrent.CompletableFuture
 
 class MusicToolWindowFactory: ToolWindowFactory, DumbAware {
+    private lateinit var playIcon: Icon
+    private lateinit var pauseIcon: Icon
+    private lateinit var musicIcon: Icon
+    private lateinit var nextIcon: Icon
+    private lateinit var prevIcon: Icon
+    
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
         CavaService.start()
-
-        val panel = JPanel(BorderLayout())
-
-        val nowPlayingLabel = JLabel(CrossPlatformPlayerService.getNowPlaying())
-        nowPlayingLabel.apply {
-            font = JBUI.Fonts.label().deriveFont(16f)
-            horizontalAlignment = JLabel.CENTER
-            verticalAlignment = JLabel.CENTER
-            border = JBUI.Borders.empty(10)
-            size = Dimension(300, 50)
-            font = JBUI.Fonts.label().deriveFont(20f).asBold()
-            name = "NowPlayingLabel"
-        }
-        panel.add(nowPlayingLabel, BorderLayout.NORTH)
-
-        val controls = JPanel()
-        val playPauseButton = JButton()
-        val nextButton = JButton()
-        val prevButton = JButton()
-
-        fun loadIcon(path: String): Icon {
-            return IconLoader.getIcon(path, MusicToolWindowFactory::class.java)
-        }
-
-        val playIcon = loadIcon("/assets/icons/play.svg")
-        val pauseIcon = loadIcon("/assets/icons/pause.svg")
-        val musicIcon = loadIcon("/assets/icons/music.svg")
-        val nextIcon = loadIcon("/assets/icons/next.svg")
-        val prevIcon = loadIcon("/assets/icons/prev.svg")
-
-        playPauseButton.apply {
-            icon = when (CrossPlatformPlayerService.getStatus()) {
-                "Playing" -> pauseIcon
-                "Paused" -> playIcon
-                else -> musicIcon
-            }
-            size = Dimension(50, 50)
-            border = JBUI.Borders.empty(10)
-            background = JBColor.PINK
-            name = "PlayPauseButton"
-        }
-        playPauseButton.addActionListener { CrossPlatformPlayerService.playPause() }
-
-        nextButton.apply {
-            icon = nextIcon
-            size = Dimension(40, 40)
-            border = JBUI.Borders.empty(10)
-            name = "NextButton"
-        }
-        nextButton.addActionListener { CrossPlatformPlayerService.next() }
-
-        prevButton.apply {
-            icon = prevIcon
-            size = Dimension(40, 40)
-            border = JBUI.Borders.empty(10)
-            name = "PreviousButton"
-        }
-        prevButton.addActionListener { CrossPlatformPlayerService.previous() }
-
-        controls.add(prevButton)
-        controls.add(playPauseButton)
-        controls.add(nextButton)
-
-        controls.apply {
-            layout = FlowLayout(FlowLayout.CENTER, 5, 5)
-        }
-        panel.add(controls, BorderLayout.SOUTH)
-
-        val visualizerPanel = VisualizerPanel()
-        panel.add(visualizerPanel, BorderLayout.CENTER)
-
-        setupKeyboardShortcuts(panel, playPauseButton, nextButton, prevButton)
+        loadIcons()
         
+        val panel = createMainPanel(project)
         val content = ContentFactory.getInstance().createContent(panel, "Meowsic Player", false)
         toolWindow.contentManager.addContent(content)
-
+    }
+    
+    private fun loadIcons() {
+        playIcon = loadIcon("/assets/icons/play.svg")
+        pauseIcon = loadIcon("/assets/icons/pause.svg")
+        musicIcon = loadIcon("/assets/icons/music.svg")
+        nextIcon = loadIcon("/assets/icons/next.svg")
+        prevIcon = loadIcon("/assets/icons/prev.svg")
+    }
+    
+    private fun loadIcon(path: String): Icon {
+        return IconLoader.getIcon(path, MusicToolWindowFactory::class.java)
+    }
+    
+    private fun createMainPanel(project: Project): JPanel {
+        val mainPanel = JBPanel<JBPanel<*>>(BorderLayout()).apply {
+            background = UIUtil.getPanelBackground()
+            border = JBUI.Borders.empty(15, 20)
+        }
+        
+        val splitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT).apply {
+            background = UIUtil.getPanelBackground()
+            border = null
+            dividerSize = 0
+            resizeWeight = 0.33
+        }
+        
+        val playerInfoCard = createPlayerInfoCard()
+        val visualizerPanel = createVisualizerPanel()
+        
+        splitPane.leftComponent = playerInfoCard.panel
+        splitPane.rightComponent = visualizerPanel
+        
+        mainPanel.add(splitPane, BorderLayout.CENTER)
+        
+        setupTimers(project, playerInfoCard, visualizerPanel)
+        setupKeyboardShortcuts(mainPanel, playerInfoCard)
+        
+        return mainPanel
+    }
+    
+    private data class PlayerInfoCard(
+        val panel: JPanel,
+        val albumArtLabel: JLabel,
+        val trackLabel: JLabel,
+        val artistLabel: JLabel,
+        val playPauseButton: JButton,
+        val nextButton: JButton,
+        val prevButton: JButton
+    )
+    
+    private fun createPlayerInfoCard(): PlayerInfoCard {
+        val cardPanel = JBPanel<JBPanel<*>>(GridBagLayout()).apply {
+            background = UIUtil.getPanelBackground()
+            border = BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(JBColor.border(), 1),
+                JBUI.Borders.empty(20, 15)
+            )
+        }
+        
+        val albumArtLabel = JLabel().apply {
+            preferredSize = Dimension(120, 120)
+            minimumSize = Dimension(120, 120)
+            maximumSize = Dimension(120, 120)
+            border = BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(JBColor.border(), 1),
+                JBUI.Borders.empty(2)
+            )
+            horizontalAlignment = JLabel.CENTER
+            verticalAlignment = JLabel.CENTER
+            icon = musicIcon
+            background = JBColor(Color(0x2B2D30), Color(0x2B2D30))
+            isOpaque = true
+        }
+        
+        val trackLabel = JLabel("Meowsic Player").apply {
+            font = JBUI.Fonts.label().deriveFont(16f).asBold()
+            foreground = UIUtil.getLabelForeground()
+            horizontalAlignment = JLabel.CENTER
+        }
+        
+        val artistLabel = JLabel("No artist").apply {
+            font = JBUI.Fonts.label().deriveFont(12f)
+            foreground = UIUtil.getContextHelpForeground()
+            horizontalAlignment = JLabel.CENTER
+        }
+        
+        val prevButton = createStyledButton(prevIcon, 32, 32, "Previous Track")
+        val playPauseButton = createStyledButton(
+            getIconForStatus(CrossPlatformPlayerService.getStatus()), 
+            40, 40, "Play/Pause"
+        ).apply {
+            background = JBColor(Color(0x5E8F5A), Color(0x5E8F5A))
+            putClientProperty("PlayPauseButton", true)
+        }
+        val nextButton = createStyledButton(nextIcon, 32, 32, "Next Track")
+        
+        playPauseButton.addActionListener { CrossPlatformPlayerService.playPause() }
+        nextButton.addActionListener { CrossPlatformPlayerService.next() }
+        prevButton.addActionListener { CrossPlatformPlayerService.previous() }
+        
+        val controlsPanel = JBPanel<JBPanel<*>>(FlowLayout(FlowLayout.CENTER, 10, 0)).apply {
+            background = UIUtil.getPanelBackground()
+            add(prevButton)
+            add(playPauseButton)
+            add(nextButton)
+        }
+        
+        val gbc = GridBagConstraints().apply {
+            gridx = 0
+            gridy = 0
+            anchor = GridBagConstraints.CENTER
+            fill = GridBagConstraints.NONE
+            insets = JBUI.insetsBottom(15)
+        }
+        
+        cardPanel.add(albumArtLabel, gbc)
+        
+        gbc.gridy = 1
+        gbc.insets = JBUI.insetsBottom(8)
+        cardPanel.add(trackLabel, gbc)
+        
+        gbc.gridy = 2
+        gbc.insets = JBUI.insetsBottom(20)
+        cardPanel.add(artistLabel, gbc)
+        
+        gbc.gridy = 3
+        gbc.insets = JBUI.emptyInsets()
+        cardPanel.add(controlsPanel, gbc)
+        
+        return PlayerInfoCard(cardPanel, albumArtLabel, trackLabel, artistLabel, playPauseButton, nextButton, prevButton)
+    }
+    
+    private fun createVisualizerPanel(): VisualizerPanel {
+        return VisualizerPanel().apply {
+            preferredSize = Dimension(-1, 120)
+            minimumSize = Dimension(200, 120)
+            background = UIUtil.getPanelBackground().darker()
+            border = BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(JBColor.border(), 1),
+                JBUI.Borders.empty(10)
+            )
+        }
+    }
+    
+    private fun createStyledButton(icon: Icon, width: Int, height: Int, tooltip: String): JButton {
+        return JButton(icon).apply {
+            preferredSize = Dimension(width, height)
+            minimumSize = Dimension(width, height)
+            maximumSize = Dimension(width, height)
+            toolTipText = tooltip
+            cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)
+            isFocusPainted = false
+            isContentAreaFilled = false
+            border = BorderFactory.createEmptyBorder()
+            background = JBColor(Color(0x4C5052), Color(0x4C5052))
+            
+            addMouseListener(object : MouseAdapter() {
+                override fun mouseEntered(e: MouseEvent) {
+                    isContentAreaFilled = true
+                    background = if (getClientProperty("PlayPauseButton") == true) {
+                        JBColor(JBColor.PINK.darker(), JBColor.PINK)
+                    } else {
+                        JBColor(Color(0x5C6164), Color(0x5C6164))
+                    }
+                }
+                
+                override fun mouseExited(e: MouseEvent) {
+                    background = UIUtil.getPanelBackground()
+                }
+                
+                override fun mousePressed(e: MouseEvent) {
+                    background = if (getClientProperty("PlayPauseButton") == true) {
+                        JBColor(JBColor.PINK.darker().darker(), JBColor.PINK.darker())
+                    } else {
+                        JBColor(Color(0x3C4143), Color(0x3C4143))
+                    }
+                }
+            })
+        }
+    }
+    
+    private fun loadAlbumArt(albumArtUrl: String, albumArtLabel: JLabel) {
+        if (albumArtUrl.isBlank()) {
+            SwingUtilities.invokeLater {
+                albumArtLabel.icon = musicIcon
+            }
+            return
+        }
+        
+        CompletableFuture.supplyAsync {
+            try {
+                val uri = URI.create(albumArtUrl)
+                val originalImage = ImageIO.read(uri.toURL())
+                
+                val scaledImage = BufferedImage(120, 120, BufferedImage.TYPE_INT_ARGB)
+                val g2d = scaledImage.createGraphics()
+                g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR)
+                g2d.drawImage(originalImage, 0, 0, 120, 120, null)
+                g2d.dispose()
+                
+                ImageIcon(scaledImage)
+            } catch (e: Exception) {
+                println("Failed to load album art from $albumArtUrl: ${e.message}")
+                musicIcon
+            }
+        }.thenAcceptAsync({ icon ->
+            SwingUtilities.invokeLater {
+                albumArtLabel.icon = icon
+            }
+        }, SwingUtilities::invokeLater)
+    }
+    
+    private fun getIconForStatus(status: String): Icon {
+        return when (status) {
+            "Playing" -> pauseIcon
+            "Paused" -> playIcon
+            else -> playIcon
+        }
+    }
+    
+    private fun setupTimers(
+        project: Project,
+        playerInfoCard: PlayerInfoCard,
+        visualizerPanel: VisualizerPanel
+    ) {
         val disposable = Disposer.newDisposable("MusicPlayerToolWindow")
         
         val playerUpdateTimer = Timer(1000) {
             try {
-                val title = CrossPlatformPlayerService.getNowPlaying()
+                val metadata = CrossPlatformPlayerService.getMetadata()
                 val status = CrossPlatformPlayerService.getStatus()
                 
-                nowPlayingLabel.text = "Now Playing: $title"
-                playPauseButton.icon = when (status) {
-                    "Playing" -> pauseIcon
-                    "Paused" -> playIcon
-                    else -> musicIcon
-                }
-            } catch (e: Exception) {
-                nowPlayingLabel.text = "Meowsic Player"
-                playPauseButton.icon = musicIcon
+                playerInfoCard.trackLabel.text = metadata.getDisplayTitle()
+                playerInfoCard.artistLabel.text = metadata.getDisplayArtist()
+                playerInfoCard.playPauseButton.icon = getIconForStatus(status)
+                
+                loadAlbumArt(metadata.albumArtUrl, playerInfoCard.albumArtLabel)
+            } catch (_: Exception) {
+                playerInfoCard.trackLabel.text = "Meowsic Player"
+                playerInfoCard.artistLabel.text = "No track playing"
+                playerInfoCard.playPauseButton.icon = playIcon
+                playerInfoCard.albumArtLabel.icon = musicIcon
             }
         }
         
@@ -142,35 +303,46 @@ class MusicToolWindowFactory: ToolWindowFactory, DumbAware {
         visualizerUpdateTimer.start()
     }
     
-    private fun setupKeyboardShortcuts(panel: JPanel, playPauseButton: JButton, nextButton: JButton, prevButton: JButton) {
+    private fun setupKeyboardShortcuts(panel: JPanel, playerInfoCard: PlayerInfoCard) {
         val inputMap = panel.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
         val actionMap = panel.actionMap
         
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "playPause")
-        actionMap.put("playPause", object : AbstractAction() {
-            override fun actionPerformed(e: java.awt.event.ActionEvent?) {
-                playPauseButton.doClick()
-            }
-        })
+        addKeyboardAction(inputMap, actionMap, KeyEvent.VK_SPACE, "playPause") {
+            playerInfoCard.playPauseButton.doClick()
+        }
         
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), "nextTrack")
-        actionMap.put("nextTrack", object : AbstractAction() {
-            override fun actionPerformed(e: java.awt.event.ActionEvent?) {
-                nextButton.doClick()
-            }
-        })
+        addKeyboardAction(inputMap, actionMap, KeyEvent.VK_RIGHT, "nextTrack") {
+            playerInfoCard.nextButton.doClick()
+        }
         
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), "prevTrack")
-        actionMap.put("prevTrack", object : AbstractAction() {
-            override fun actionPerformed(e: java.awt.event.ActionEvent?) {
-                prevButton.doClick()
-            }
-        })
+        addKeyboardAction(inputMap, actionMap, KeyEvent.VK_LEFT, "prevTrack") {
+            playerInfoCard.prevButton.doClick()
+        }
         
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_N, 0), "nextTrack")
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_P, 0), "prevTrack")
+        addKeyboardAction(inputMap, actionMap, KeyEvent.VK_N, "nextTrackN") {
+            playerInfoCard.nextButton.doClick()
+        }
+        
+        addKeyboardAction(inputMap, actionMap, KeyEvent.VK_P, "prevTrackP") {
+            playerInfoCard.prevButton.doClick()
+        }
         
         panel.isFocusable = true
         panel.requestFocusInWindow()
+    }
+    
+    private fun addKeyboardAction(
+        inputMap: InputMap,
+        actionMap: ActionMap,
+        keyCode: Int,
+        actionName: String,
+        action: () -> Unit
+    ) {
+        inputMap.put(KeyStroke.getKeyStroke(keyCode, 0), actionName)
+        actionMap.put(actionName, object : AbstractAction() {
+            override fun actionPerformed(e: java.awt.event.ActionEvent?) {
+                action()
+            }
+        })
     }
 }

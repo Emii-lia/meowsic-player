@@ -7,18 +7,36 @@ class PlayerctlServiceTest: BasePlatformTestCase() {
         val nowPlaying = CrossPlatformPlayerService.getNowPlaying()
         assertTrue(nowPlaying.isNotEmpty())
     }
+    
+    fun testGetMetadataReturnsValidTrackMetadata() {
+        val metadata = CrossPlatformPlayerService.getMetadata()
+        
+        assertNotNull(metadata)
+        assertNotNull(metadata.title)
+        assertNotNull(metadata.artist)
+        assertNotNull(metadata.album)
+        assertNotNull(metadata.albumArtUrl)
+        
+        assertTrue(metadata.title.isNotEmpty())
+        assertTrue(metadata.artist.isNotEmpty())
+        assertTrue(metadata.album.isNotEmpty())
+    }
+    
     fun testPlayPauseReturnsAString() {
         val playPause = CrossPlatformPlayerService.playPause()
         assertNotNull(playPause)
     }
+    
     fun testNextReturnsEmptyString() {
         val next = CrossPlatformPlayerService.next()
         assertNotNull(next)
     }
+    
     fun testPreviousReturnsEmptyString() {
         val previous = CrossPlatformPlayerService.previous()
         assertNotNull(previous)
     }
+    
     fun testGetStatusReturnsString() {
         val status = CrossPlatformPlayerService.getStatus()
         assertTrue(status.isNotEmpty())
