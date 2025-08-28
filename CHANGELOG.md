@@ -1,6 +1,7 @@
 <!-- Keep a Changelog guide -> https://keepachangelog.com -->
 
 # jetbrain-music-player Changelog
+## Unreleased
 
 ## [1.0.0-beta] - 2025-08-28
 ### Added
