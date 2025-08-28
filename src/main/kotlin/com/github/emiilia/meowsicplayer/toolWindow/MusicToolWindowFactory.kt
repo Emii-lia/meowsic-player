@@ -157,20 +157,27 @@ class MusicToolWindowFactory: ToolWindowFactory, DumbAware {
             anchor = GridBagConstraints.CENTER
             fill = GridBagConstraints.NONE
             insets = JBUI.insetsBottom(15)
+            weightx = 0.0
         }
         
         cardPanel.add(albumArtLabel, gbc)
         
         gbc.gridy = 1
         gbc.insets = JBUI.insetsBottom(8)
+        gbc.fill = GridBagConstraints.HORIZONTAL
+        gbc.weightx = 1.0
         cardPanel.add(trackLabel, gbc)
         
         gbc.gridy = 2
         gbc.insets = JBUI.insetsBottom(20)
+        gbc.fill = GridBagConstraints.HORIZONTAL
+        gbc.weightx = 1.0
         cardPanel.add(artistLabel, gbc)
         
         gbc.gridy = 3
         gbc.insets = JBUI.emptyInsets()
+        gbc.fill = GridBagConstraints.NONE
+        gbc.weightx = 0.0
         cardPanel.add(controlsPanel, gbc)
         
         return PlayerInfoCard(cardPanel, albumArtLabel, trackLabel, artistLabel, playPauseButton, nextButton, prevButton)
