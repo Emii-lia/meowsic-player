@@ -117,7 +117,7 @@ class MusicToolWindowFactory: ToolWindowFactory, DumbAware {
             foreground = UIUtil.getLabelForeground()
             horizontalAlignment = JLabel.CENTER
             verticalAlignment = JLabel.CENTER
-            border = JBUI.Borders.empty(5, 15, 5, 15)
+            border = JBUI.Borders.empty(5, 15)
             preferredSize = Dimension(-1, 40)
         }
         
@@ -284,7 +284,7 @@ class MusicToolWindowFactory: ToolWindowFactory, DumbAware {
                 val metadata = CrossPlatformPlayerService.getMetadata()
                 val status = CrossPlatformPlayerService.getStatus()
                 
-                playerInfoCard.trackLabel.text = truncateText(metadata.getDisplayTitle(), 30)
+                playerInfoCard.trackLabel.text = truncateText(metadata.getDisplayTitle(), 100)
                 playerInfoCard.artistLabel.text = truncateText(metadata.getDisplayArtist(), 30)
                 playerInfoCard.playPauseButton.icon = getIconForStatus(status)
                 
