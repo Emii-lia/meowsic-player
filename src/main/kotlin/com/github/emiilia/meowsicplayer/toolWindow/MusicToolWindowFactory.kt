@@ -284,7 +284,7 @@ class MusicToolWindowFactory: ToolWindowFactory, DumbAware {
                 val metadata = CrossPlatformPlayerService.getMetadata()
                 val status = CrossPlatformPlayerService.getStatus()
                 
-                playerInfoCard.trackLabel.text = truncateText(metadata.getDisplayTitle(), 100)
+                playerInfoCard.trackLabel.text = truncateText(metadata.getDisplayTitle(), 60)
                 playerInfoCard.artistLabel.text = truncateText(metadata.getDisplayArtist(), 30)
                 playerInfoCard.playPauseButton.icon = getIconForStatus(status)
                 
