@@ -233,7 +233,7 @@ class MusicToolWindowFactory: ToolWindowFactory, DumbAware {
     }
     
     private fun loadAlbumArt(albumArtUrl: String, albumArtLabel: JLabel) {
-        if (albumArtUrl.isBlank()) {
+        if (albumArtUrl.isBlank() || !isValidAlbumArtUrl(albumArtUrl)) {
             SwingUtilities.invokeLater {
                 albumArtLabel.icon = musicIcon
             }
@@ -261,6 +261,15 @@ class MusicToolWindowFactory: ToolWindowFactory, DumbAware {
                 albumArtLabel.icon = icon
             }
         }, SwingUtilities::invokeLater)
+    }
+    
+    private fun isValidAlbumArtUrl(url: String): Boolean {
+        return try {
+            URI.create(url)
+            url.startsWith("http://") || url.startsWith("https://") || url.startsWith("file://")
+        } catch (_: Exception) {
+            false
+        }
     }
     
     private fun truncateText(text: String, maxLength: Int = 30): String {

@@ -22,6 +22,7 @@
 - PowerShell variable syntax issues in Windows implementation
 - AppleScript execution robustness in macOS implementation
 - Consistent return values across all platform implementations
+- Cross-platform stdout compatibility in CavaService for Windows, macOS, and Linux
 
 ## [0.1.0] - 2025-08-26
 ### Added
