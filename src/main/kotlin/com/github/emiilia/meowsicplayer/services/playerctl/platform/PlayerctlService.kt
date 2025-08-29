@@ -25,7 +25,10 @@ class PlayerctlService : PlayerctlServiceInterface {
         }
     }
     
-    override fun getNowPlaying(): String = runCommand("metadata", "title")
+    override fun getNowPlaying(): String {
+        val title = runCommand("metadata", "title")
+        return title.ifBlank { "No track playing" }
+    }
 
     override fun getMetadata(): TrackMetadata {
         return try {
@@ -66,5 +69,8 @@ class PlayerctlService : PlayerctlServiceInterface {
 
     override fun previous() = runCommand("previous")
 
-    override fun getStatus(): String = runCommand("status")
+    override fun getStatus(): String {
+        val status = runCommand("status")
+        return status.ifBlank { "Stopped" }
+    }
 }
