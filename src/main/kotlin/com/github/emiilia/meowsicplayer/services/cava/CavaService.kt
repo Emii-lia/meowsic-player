@@ -59,7 +59,7 @@ object CavaService : CavaServiceInterface {
             val exitCode = process.waitFor()
             cavaAvailable = (exitCode == 0)
             cavaAvailable!!
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             cavaAvailable = false
             false
         }
@@ -93,7 +93,7 @@ object CavaService : CavaServiceInterface {
                                     bars.addAll(newBars)
                                 }
                             }
-                        } catch (e: Exception) {
+                        } catch (_: Exception) {
                             Thread.sleep(50)
                         }
                     }
