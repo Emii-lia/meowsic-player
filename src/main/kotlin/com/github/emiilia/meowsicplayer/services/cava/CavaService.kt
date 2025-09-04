@@ -12,6 +12,7 @@ object CavaService : CavaServiceInterface {
     private var readerThread: Thread? = null
     private val bars = CopyOnWriteArrayList<Int>()
     private var tempConfigPath: String? = null
+    private var cavaAvailable: Boolean? = null
 
     private fun createTempConfig(): String {
         if (tempConfigPath != null && File(tempConfigPath!!).exists()) {
@@ -41,7 +42,35 @@ object CavaService : CavaServiceInterface {
         }
     }
 
+    private fun isCavaAvailable(): Boolean {
+        if (cavaAvailable != null) {
+            return cavaAvailable!!
+        }
+        
+        return try {
+            val command = when (Platform.os) {
+                Platform.OS.WINDOWS -> "where"
+                else -> "which"
+            }
+            
+            val process = ProcessBuilder(command, "cava")
+                .redirectErrorStream(false)
+                .start()
+            val exitCode = process.waitFor()
+            cavaAvailable = (exitCode == 0)
+            cavaAvailable!!
+        } catch (e: Exception) {
+            cavaAvailable = false
+            false
+        }
+    }
+    
     override fun start() {
+        if (!isCavaAvailable()) {
+            println("Cava is not installed. Visualizer will be disabled.")
+            return
+        }
+        
         if (cavaProcess != null && cavaProcess!!.isAlive) return
         try {
             val configPath = createTempConfig()
