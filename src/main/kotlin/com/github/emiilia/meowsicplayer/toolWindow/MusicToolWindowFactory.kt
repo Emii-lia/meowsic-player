@@ -2,6 +2,7 @@ package com.github.emiilia.meowsicplayer.toolWindow
 
 import com.github.emiilia.meowsicplayer.services.cava.CavaService
 import com.github.emiilia.meowsicplayer.services.playerctl.CrossPlatformPlayerService
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
@@ -24,11 +25,14 @@ import javax.imageio.ImageIO
 import java.util.concurrent.CompletableFuture
 
 class MusicToolWindowFactory: ToolWindowFactory, DumbAware {
+    private val logger = Logger.getInstance(MusicToolWindowFactory::class.java)
     private lateinit var playIcon: Icon
     private lateinit var pauseIcon: Icon
     private lateinit var musicIcon: Icon
     private lateinit var nextIcon: Icon
     private lateinit var prevIcon: Icon
+    private val albumArtCache = mutableMapOf<String, ImageIcon>()
+    private var currentAlbumArtUrl: String = ""
     
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
         CavaService.start()
@@ -240,6 +244,13 @@ class MusicToolWindowFactory: ToolWindowFactory, DumbAware {
             return
         }
         
+        albumArtCache[albumArtUrl]?.let { cachedIcon ->
+            SwingUtilities.invokeLater {
+                albumArtLabel.icon = cachedIcon
+            }
+            return
+        }
+        
         CompletableFuture.supplyAsync {
             try {
                 val uri = URI.create(albumArtUrl)
@@ -251,9 +262,17 @@ class MusicToolWindowFactory: ToolWindowFactory, DumbAware {
                 g2d.drawImage(originalImage, 0, 0, 120, 120, null)
                 g2d.dispose()
                 
-                ImageIcon(scaledImage)
+                val icon = ImageIcon(scaledImage)
+                albumArtCache[albumArtUrl] = icon
+                
+                if (albumArtCache.size > 10) {
+                    val oldestKey = albumArtCache.keys.first()
+                    albumArtCache.remove(oldestKey)
+                }
+                
+                icon
             } catch (e: Exception) {
-                println("Failed to load album art from $albumArtUrl: ${e.message}")
+                logger.warn("Failed to load album art from $albumArtUrl", e)
                 musicIcon
             }
         }.thenAcceptAsync({ icon ->
@@ -314,7 +333,10 @@ class MusicToolWindowFactory: ToolWindowFactory, DumbAware {
                             playerInfoCard.artistLabel.text = truncateText(metadata.getDisplayArtist(), 30)
                             playerInfoCard.playPauseButton.icon = getIconForStatus(status)
                             
-                            loadAlbumArt(metadata.albumArtUrl, playerInfoCard.albumArtLabel)
+                            if (metadata.albumArtUrl != currentAlbumArtUrl) {
+                                currentAlbumArtUrl = metadata.albumArtUrl
+                                loadAlbumArt(metadata.albumArtUrl, playerInfoCard.albumArtLabel)
+                            }
                         }
                     }
                 } catch (_: Exception) {
@@ -343,7 +365,7 @@ class MusicToolWindowFactory: ToolWindowFactory, DumbAware {
                     }
                 } catch (e: Exception) {
                     if (!project.isDisposed) {
-                        System.err.println("Error updating visualizer: ${e.message}")
+                        logger.debug("Error updating visualizer", e)
                     }
                 }
             }
@@ -361,7 +383,7 @@ class MusicToolWindowFactory: ToolWindowFactory, DumbAware {
                         }
                     }
                 } catch (e: Exception) {
-                    System.err.println("Error during timer disposal: ${e.message}")
+                    logger.debug("Error during timer disposal", e)
                 }
             }
             

@@ -8,21 +8,23 @@
 - **Cross-platform support** for Windows, macOS, and Linux
 - Windows integration using PowerShell and Global System Media Transport Controls
 - macOS integration using AppleScript for Music and Spotify applications
-- **Structured track metadata**
+- **Structured track metadata** with comprehensive information display
 - **Album art display** with automatic image loading and scaling
-- Comprehensive metadata retrieval (title, artist, album, artwork URL)
 - Platform detection utility for automatic OS identification
 
 ### Changed
-- **Major UI redesign** with modern card-based layout
-- Refactored player service architecture for cross-platform compatibility
-- **Vertical player info card** with integrated playback controls
+- **Major UI redesign** with modern card-based layout for better visual hierarchy
+- **Enhanced performance** with caching and reduced resource usage  
+- **Improved reliability** with better error handling and fallbacks
+- **Faster response times** through optimized data retrieval and processing
 
 ### Fixed
-- PowerShell variable syntax issues in Windows implementation
-- AppleScript execution robustness in macOS implementation
-- Consistent return values across all platform implementations
-- Cross-platform stdout compatibility in CavaService for Windows, macOS, and Linux
+- **Show/Hide tool window button** now works correctly
+- **Album art loading** no longer causes unnecessary network requests or performance issues
+- **Music player controls** respond more quickly and reliably with improved caching
+- **Visualizer stability** improved with better error handling and resource management
+- **Memory usage** optimized to prevent resource leaks and improve long-term stability
+- **Cross-platform compatibility** issues resolved for Windows, macOS, and Linux
 
 ## [0.1.0] - 2025-08-26
 ### Added

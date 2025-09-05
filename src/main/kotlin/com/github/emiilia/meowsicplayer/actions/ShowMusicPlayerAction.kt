@@ -30,7 +30,7 @@ class ShowMusicPlayerAction : AnAction(), DumbAware {
         e.presentation.isEnabledAndVisible = project != null
         
         if (project != null) {
-            val toolWindow = ToolWindowManager.getInstance(project).getToolWindow("MusicPlayer")
+            val toolWindow = ToolWindowManager.getInstance(project).getToolWindow("Meowsic Player")
             e.presentation.text = if (toolWindow?.isVisible == true) {
                 "Hide Music Player"
             } else {
