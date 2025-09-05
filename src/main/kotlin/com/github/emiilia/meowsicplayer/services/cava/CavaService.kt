@@ -61,7 +61,8 @@ object CavaService : CavaServiceInterface {
             val exitCode = process.waitFor()
             cavaAvailable = (exitCode == 0)
             cavaAvailable!!
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            logger.debug("Error checking cava availability", e)
             cavaAvailable = false
             false
         }
@@ -95,14 +96,17 @@ object CavaService : CavaServiceInterface {
                                     bars.addAll(newBars)
                                 }
                             }
-                        } catch (_: Exception) {
+                        } catch (e: Exception) {
+                            logger.debug("Error reading cava output line", e)
                             Thread.sleep(50)
                         }
                     }
                 } finally {
                     try {
                         reader.close()
-                    } catch (_: Exception) { }
+                    } catch (e: Exception) {
+                        logger.debug("Error closing cava reader", e)
+                    }
                 }
             }
 
@@ -111,7 +115,9 @@ object CavaService : CavaServiceInterface {
             cavaProcess?.let { process ->
                 try {
                     process.destroyForcibly()
-                } catch (_: Exception) { }
+                } catch (e: Exception) {
+                    logger.debug("Error force-destroying cava process during startup cleanup", e)
+                }
             }
             cavaProcess = null
             readerThread?.interrupt()
@@ -139,7 +145,8 @@ object CavaService : CavaServiceInterface {
                     process.destroyForcibly()
                     try {
                         process.waitFor(2, java.util.concurrent.TimeUnit.SECONDS)
-                    } catch (_: Exception) {
+                    } catch (e: Exception) {
+                        logger.debug("Process didn't terminate after force kill, continuing cleanup", e)
                     }
                 }
             }
@@ -147,7 +154,8 @@ object CavaService : CavaServiceInterface {
             readerThread?.let { thread ->
                 try {
                     thread.join(1000)
-                } catch (_: InterruptedException) {
+                } catch (e: InterruptedException) {
+                    logger.debug("Reader thread join interrupted, continuing cleanup", e)
                 }
             }
             
@@ -158,7 +166,8 @@ object CavaService : CavaServiceInterface {
             tempConfigPath?.let { path ->
                 try {
                     File(path).delete()
-                } catch (_: Exception) {
+                } catch (e: Exception) {
+                    logger.debug("Failed to delete temp config file: $path", e)
                 }
                 tempConfigPath = null
             }
