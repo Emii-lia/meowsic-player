@@ -15,14 +15,18 @@ class VisualizerPanel: JPanel() {
         if (displayedBars.isEmpty()) {
             displayedBars = newBars.map { it.toDouble() }.toMutableList()
         } else {
-            for (i in displayedBars.indices) {
-                val target = newBars[i].toDouble()
-                val current = displayedBars[i]
+            if (displayedBars.size != newBars.size) {
+                displayedBars = newBars.map { it.toDouble() }.toMutableList()
+            } else {
+                for (i in displayedBars.indices) {
+                    val target = newBars[i].toDouble()
+                    val current = displayedBars[i]
 
-                displayedBars[i] = if (current < target) {
-                    current + (target - current) * riseSpeed
-                } else {
-                    current - (current - target) * fallSpeed
+                    displayedBars[i] = if (current < target) {
+                        current + (target - current) * riseSpeed
+                    } else {
+                        current - (current - target) * fallSpeed
+                    }
                 }
             }
         }
