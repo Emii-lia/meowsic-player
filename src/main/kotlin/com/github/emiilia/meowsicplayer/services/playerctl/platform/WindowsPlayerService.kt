@@ -11,9 +11,9 @@ class WindowsPlayerService: PlayerctlServiceInterface {
             val process = ProcessBuilder("powershell.exe", "-Command", command)
                 .redirectErrorStream(true)
                 .start()
-            BufferedReader(InputStreamReader(process.inputStream))
-                .readText()
-                .trim()
+            BufferedReader(InputStreamReader(process.inputStream)).use { reader ->
+                reader.readText().trim()
+            }
         } catch (e: Exception) {
             "Windows Media Session not available: ${e.message}"
         }

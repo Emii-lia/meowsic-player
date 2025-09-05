@@ -11,9 +11,9 @@ class MacosPlayerService: PlayerctlServiceInterface {
             val process = ProcessBuilder("osascript", "-e", script)
                 .redirectErrorStream(true)
                 .start()
-            BufferedReader(InputStreamReader(process.inputStream))
-                .readText()
-                .trim()
+            BufferedReader(InputStreamReader(process.inputStream)).use { reader ->
+                reader.readText().trim()
+            }
         } catch (e: Exception) {
             "AppleScript execution failed: ${e.message}"
         }

@@ -11,8 +11,9 @@ class PlayerctlService : PlayerctlServiceInterface {
             val process = ProcessBuilder("playerctl", *args)
                 .redirectErrorStream(false).start()
             
-            val output = BufferedReader(InputStreamReader(process.inputStream))
-                .readText().trim()
+            val output = BufferedReader(InputStreamReader(process.inputStream)).use { reader ->
+                reader.readText().trim()
+            }
             
             val exitCode = process.waitFor()
             if (exitCode != 0) {
