@@ -317,7 +317,7 @@ class MusicToolWindowFactory: ToolWindowFactory, DumbAware {
                             loadAlbumArt(metadata.albumArtUrl, playerInfoCard.albumArtLabel)
                         }
                     }
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                     if (!project.isDisposed) {
                         SwingUtilities.invokeLater {
                             playerInfoCard.trackLabel.text = "Meowsic Player"
@@ -375,7 +375,7 @@ class MusicToolWindowFactory: ToolWindowFactory, DumbAware {
                 playerUpdateTimer?.stop()
                 visualizerUpdateTimer?.stop()
                 Disposer.dispose(disposable)
-            } catch (cleanupException: Exception) {
+            } catch (_: Exception) {
             }
             throw e
         }
