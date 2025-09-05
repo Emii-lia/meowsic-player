@@ -6,13 +6,19 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 
 class PlayerctlService : PlayerctlServiceInterface {
+    private var lastMetadata: TrackMetadata? = null
+    private var lastMetadataTime: Long = 0
+    private var lastStatus: String = ""
+    private var lastStatusTime: Long = 0
+    private val cacheValidityMs = 500
     private fun runCommand(vararg args: String): String {
         return try {
             val process = ProcessBuilder("playerctl", *args)
                 .redirectErrorStream(false).start()
             
-            val output = BufferedReader(InputStreamReader(process.inputStream))
-                .readText().trim()
+            val output = BufferedReader(InputStreamReader(process.inputStream)).use { reader ->
+                reader.readText().trim()
+            }
             
             val exitCode = process.waitFor()
             if (exitCode != 0) {
@@ -24,36 +30,7 @@ class PlayerctlService : PlayerctlServiceInterface {
             ""
         }
     }
-    
-    override fun getNowPlaying(): String {
-        val title = runCommand("metadata", "title")
-        return title.ifBlank { "No track playing" }
-    }
 
-    override fun getMetadata(): TrackMetadata {
-        return try {
-            val title = runCommand("metadata", "title").takeIf { it.isNotBlank() } ?: "Unknown Track"
-            val artist = runCommand("metadata", "artist").takeIf { it.isNotBlank() } ?: "Unknown Artist"
-            val album = runCommand("metadata", "album").takeIf { it.isNotBlank() } ?: "Unknown Album"
-            val albumArtRaw = runCommand("metadata", "mpris:artUrl")
-            
-            val albumArt = if (albumArtRaw.isNotBlank() && isValidUrl(albumArtRaw)) {
-                albumArtRaw
-            } else {
-                ""
-            }
-            
-            TrackMetadata(
-                title = title,
-                artist = artist,
-                album = album,
-                albumArtUrl = albumArt
-            )
-        } catch (_: Exception) {
-            TrackMetadata()
-        }
-    }
-    
     private fun isValidUrl(url: String): Boolean {
         return try {
             java.net.URI.create(url)
@@ -63,14 +40,85 @@ class PlayerctlService : PlayerctlServiceInterface {
         }
     }
 
-    override fun playPause(): String = runCommand("play-pause")
+    private fun invalidateCache() {
+        lastMetadata = null
+        lastMetadataTime = 0
+        lastStatus = ""
+        lastStatusTime = 0
+    }
+    
+    override fun getNowPlaying(): String {
+        val title = runCommand("metadata", "title")
+        return title.ifBlank { "No track playing" }
+    }
 
-    override fun next() = runCommand("next")
+    override fun getMetadata(): TrackMetadata {
+        val currentTime = System.currentTimeMillis()
 
-    override fun previous() = runCommand("previous")
+        lastMetadata?.let { cached ->
+            if (currentTime - lastMetadataTime < cacheValidityMs) {
+                return cached
+            }
+        }
+        
+        return try {
+            val metadataRaw = runCommand("metadata", "--format", "{{title}}|{{artist}}|{{album}}|{{mpris:artUrl}}")
+            val parts = metadataRaw.split("|", limit = 4)
+            
+            val title = parts.getOrNull(0)?.takeIf { it.isNotBlank() } ?: "Unknown Track"
+            val artist = parts.getOrNull(1)?.takeIf { it.isNotBlank() } ?: "Unknown Artist"
+            val album = parts.getOrNull(2)?.takeIf { it.isNotBlank() } ?: "Unknown Album"
+            val albumArtRaw = parts.getOrNull(3) ?: ""
+            
+            val albumArt = if (albumArtRaw.isNotBlank() && isValidUrl(albumArtRaw)) {
+                albumArtRaw
+            } else {
+                ""
+            }
+            
+            val metadata = TrackMetadata(
+                title = title,
+                artist = artist,
+                album = album,
+                albumArtUrl = albumArt
+            )
+
+            lastMetadata = metadata
+            lastMetadataTime = currentTime
+            metadata
+        } catch (_: Exception) {
+            TrackMetadata()
+        }
+    }
+
+    override fun playPause(): String {
+        invalidateCache()
+        return runCommand("play-pause")
+    }
+
+    override fun next(): String {
+        invalidateCache()
+        return runCommand("next")
+    }
+
+    override fun previous(): String {
+        invalidateCache()
+        return runCommand("previous")
+    }
 
     override fun getStatus(): String {
+        val currentTime = System.currentTimeMillis()
+
+        if (currentTime - lastStatusTime < cacheValidityMs && lastStatus.isNotEmpty()) {
+            return lastStatus
+        }
+        
         val status = runCommand("status")
-        return status.ifBlank { "Stopped" }
+        val result = status.ifBlank { "Stopped" }
+
+        lastStatus = result
+        lastStatusTime = currentTime
+        
+        return result
     }
 }
