@@ -295,42 +295,90 @@ class MusicToolWindowFactory: ToolWindowFactory, DumbAware {
     ) {
         val disposable = Disposer.newDisposable("MusicPlayerToolWindow")
         
-        val playerUpdateTimer = Timer(1000) {
-            try {
-                val metadata = CrossPlatformPlayerService.getMetadata()
-                val status = CrossPlatformPlayerService.getStatus()
-                
-                playerInfoCard.trackLabel.text = truncateText(metadata.getDisplayTitle(), 60)
-                playerInfoCard.artistLabel.text = truncateText(metadata.getDisplayArtist(), 30)
-                playerInfoCard.playPauseButton.icon = getIconForStatus(status)
-                
-                loadAlbumArt(metadata.albumArtUrl, playerInfoCard.albumArtLabel)
-            } catch (_: Exception) {
-                playerInfoCard.trackLabel.text = "Meowsic Player"
-                playerInfoCard.artistLabel.text = "No track playing"
-                playerInfoCard.playPauseButton.icon = playIcon
-                playerInfoCard.albumArtLabel.icon = musicIcon
+        var playerUpdateTimer: Timer? = null
+        var visualizerUpdateTimer: Timer? = null
+        
+        try {
+            playerUpdateTimer = Timer(1000) {
+                try {
+                    if (project.isDisposed) {
+                        return@Timer
+                    }
+                    
+                    val metadata = CrossPlatformPlayerService.getMetadata()
+                    val status = CrossPlatformPlayerService.getStatus()
+                    
+                    SwingUtilities.invokeLater {
+                        if (!project.isDisposed) {
+                            playerInfoCard.trackLabel.text = truncateText(metadata.getDisplayTitle(), 60)
+                            playerInfoCard.artistLabel.text = truncateText(metadata.getDisplayArtist(), 30)
+                            playerInfoCard.playPauseButton.icon = getIconForStatus(status)
+                            
+                            loadAlbumArt(metadata.albumArtUrl, playerInfoCard.albumArtLabel)
+                        }
+                    }
+                } catch (e: Exception) {
+                    if (!project.isDisposed) {
+                        SwingUtilities.invokeLater {
+                            playerInfoCard.trackLabel.text = "Meowsic Player"
+                            playerInfoCard.artistLabel.text = "No track playing"
+                            playerInfoCard.playPauseButton.icon = playIcon
+                            playerInfoCard.albumArtLabel.icon = musicIcon
+                        }
+                    }
+                }
             }
-        }
-        
-        val visualizerUpdateTimer = Timer(33) {
-            try {
-                val bars = CavaService.readBars()
-                visualizerPanel.updateBars(bars)
-            } catch (e: Exception) {
-                println("Error updating visualizer: ${e.message}")
+            
+            visualizerUpdateTimer = Timer(33) {
+                try {
+                    if (project.isDisposed) {
+                        return@Timer
+                    }
+                    
+                    val bars = CavaService.readBars()
+                    SwingUtilities.invokeLater {
+                        if (!project.isDisposed) {
+                            visualizerPanel.updateBars(bars)
+                        }
+                    }
+                } catch (e: Exception) {
+                    if (!project.isDisposed) {
+                        System.err.println("Error updating visualizer: ${e.message}")
+                    }
+                }
             }
+            
+            Disposer.register(disposable) {
+                try {
+                    playerUpdateTimer?.let { timer ->
+                        if (timer.isRunning) {
+                            timer.stop()
+                        }
+                    }
+                    visualizerUpdateTimer?.let { timer ->
+                        if (timer.isRunning) {
+                            timer.stop()
+                        }
+                    }
+                } catch (e: Exception) {
+                    System.err.println("Error during timer disposal: ${e.message}")
+                }
+            }
+            
+            Disposer.register(project, disposable)
+            
+            playerUpdateTimer.start()
+            visualizerUpdateTimer.start()
+            
+        } catch (e: Exception) {
+            try {
+                playerUpdateTimer?.stop()
+                visualizerUpdateTimer?.stop()
+                Disposer.dispose(disposable)
+            } catch (cleanupException: Exception) {
+            }
+            throw e
         }
-        
-        Disposer.register(disposable) {
-            playerUpdateTimer.stop()
-            visualizerUpdateTimer.stop()
-        }
-        
-        Disposer.register(project, disposable)
-        
-        playerUpdateTimer.start()
-        visualizerUpdateTimer.start()
     }
     
     private fun setupKeyboardShortcuts(panel: JPanel, playerInfoCard: PlayerInfoCard) {
