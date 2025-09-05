@@ -1,6 +1,7 @@
 package com.github.emiilia.meowsicplayer.services.cava
 
 import com.github.emiilia.meowsicplayer.utils.Platform
+import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.rd.util.CopyOnWriteArrayList
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -8,6 +9,7 @@ import java.io.File
 import kotlin.concurrent.thread
 
 object CavaService : CavaServiceInterface {
+    private val logger = Logger.getInstance(CavaService::class.java)
     private var cavaProcess: Process? = null
     private var readerThread: Thread? = null
     private val bars = CopyOnWriteArrayList<Int>()
@@ -67,7 +69,7 @@ object CavaService : CavaServiceInterface {
     
     override fun start() {
         if (!isCavaAvailable()) {
-            println("Cava is not installed. Visualizer will be disabled.")
+            logger.warn("Cava is not installed. Visualizer will be disabled.")
             return
         }
         
@@ -104,7 +106,7 @@ object CavaService : CavaServiceInterface {
                 }
             }
 
-            println("Started Cava process with PID: ${cavaProcess!!.pid()}")
+            logger.info("Started Cava process with PID: ${cavaProcess!!.pid()}")
         } catch (e: Exception) {
             cavaProcess?.let { process ->
                 try {
@@ -116,7 +118,7 @@ object CavaService : CavaServiceInterface {
             readerThread = null
             bars.clear()
             
-            println("Failed to start Cava process: ${e.message}")
+            logger.error("Failed to start Cava process", e)
         }
     }
 
@@ -161,10 +163,9 @@ object CavaService : CavaServiceInterface {
                 tempConfigPath = null
             }
             
-            println("Cava process stopped.")
+            logger.info("Cava process stopped.")
         } catch (e: Exception) {
-            e.printStackTrace()
-            println("Failed to stop Cava process: ${e.message}")
+            logger.error("Failed to stop Cava process", e)
         }
     }
 
