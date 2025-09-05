@@ -2,6 +2,7 @@ package com.github.emiilia.meowsicplayer.toolWindow
 
 import com.github.emiilia.meowsicplayer.services.cava.CavaService
 import com.github.emiilia.meowsicplayer.services.playerctl.CrossPlatformPlayerService
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
@@ -24,6 +25,7 @@ import javax.imageio.ImageIO
 import java.util.concurrent.CompletableFuture
 
 class MusicToolWindowFactory: ToolWindowFactory, DumbAware {
+    private val logger = Logger.getInstance(MusicToolWindowFactory::class.java)
     private lateinit var playIcon: Icon
     private lateinit var pauseIcon: Icon
     private lateinit var musicIcon: Icon
@@ -270,7 +272,7 @@ class MusicToolWindowFactory: ToolWindowFactory, DumbAware {
                 
                 icon
             } catch (e: Exception) {
-                System.err.println("Failed to load album art from $albumArtUrl: ${e.message}")
+                logger.warn("Failed to load album art from $albumArtUrl", e)
                 musicIcon
             }
         }.thenAcceptAsync({ icon ->
@@ -363,7 +365,7 @@ class MusicToolWindowFactory: ToolWindowFactory, DumbAware {
                     }
                 } catch (e: Exception) {
                     if (!project.isDisposed) {
-                        System.err.println("Error updating visualizer: ${e.message}")
+                        logger.debug("Error updating visualizer", e)
                     }
                 }
             }
@@ -381,7 +383,7 @@ class MusicToolWindowFactory: ToolWindowFactory, DumbAware {
                         }
                     }
                 } catch (e: Exception) {
-                    System.err.println("Error during timer disposal: ${e.message}")
+                    logger.debug("Error during timer disposal", e)
                 }
             }
             
