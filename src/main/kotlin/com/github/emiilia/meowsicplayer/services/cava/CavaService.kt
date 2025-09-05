@@ -106,15 +106,50 @@ object CavaService : CavaServiceInterface {
 
             println("Started Cava process with PID: ${cavaProcess!!.pid()}")
         } catch (e: Exception) {
+            cavaProcess?.let { process ->
+                try {
+                    process.destroyForcibly()
+                } catch (_: Exception) { }
+            }
+            cavaProcess = null
+            readerThread?.interrupt()
+            readerThread = null
+            bars.clear()
+            
             println("Failed to start Cava process: ${e.message}")
         }
     }
 
     override fun stop() {
         try {
-            cavaProcess?.destroy()
-            cavaProcess = null
             readerThread?.interrupt()
+            
+            cavaProcess?.let { process ->
+                process.destroy()
+                
+                val terminated = try {
+                    process.waitFor(1, java.util.concurrent.TimeUnit.SECONDS)
+                } catch (_: Exception) {
+                    false
+                }
+                
+                if (!terminated) {
+                    process.destroyForcibly()
+                    try {
+                        process.waitFor(2, java.util.concurrent.TimeUnit.SECONDS)
+                    } catch (_: Exception) {
+                    }
+                }
+            }
+            
+            readerThread?.let { thread ->
+                try {
+                    thread.join(1000)
+                } catch (_: InterruptedException) {
+                }
+            }
+            
+            cavaProcess = null
             readerThread = null
             bars.clear()
             
@@ -125,7 +160,6 @@ object CavaService : CavaServiceInterface {
                 }
                 tempConfigPath = null
             }
-            
             
             println("Cava process stopped.")
         } catch (e: Exception) {
