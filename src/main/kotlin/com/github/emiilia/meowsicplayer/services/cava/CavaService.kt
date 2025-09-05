@@ -29,8 +29,17 @@ object CavaService : CavaServiceInterface {
                 else -> "/config/config-linux"
             }
             
-            val configResource = CavaService::class.java.getResourceAsStream(configFileName)
-                ?: throw IllegalStateException("Bundled cava config not found in resources: $configFileName")
+            var configResource = CavaService::class.java.getResourceAsStream(configFileName)
+            
+            if (configResource == null) {
+                logger.warn("Platform-specific config $configFileName not found, falling back to Linux config")
+                configResource = CavaService::class.java.getResourceAsStream("/config/config-linux")
+            }
+            
+            if (configResource == null) {
+                logger.warn("Linux config not found, using minimal fallback config")
+                return createFallbackConfig()
+            }
             
             val tempConfigFile = File.createTempFile("cava_config_", ".conf")
             tempConfigFile.deleteOnExit()
@@ -41,8 +50,44 @@ object CavaService : CavaServiceInterface {
             tempConfigPath = tempConfigFile.absolutePath
             return tempConfigPath!!
         } catch (e: Exception) {
-            throw RuntimeException("Failed to create temporary cava config: ${e.message}", e)
+            logger.error("Failed to create temporary cava config", e)
+            try {
+                return createFallbackConfig()
+            } catch (fallbackException: Exception) {
+                logger.error("Failed to create fallback config", fallbackException)
+                throw RuntimeException("Failed to create any cava config: ${e.message}", e)
+            }
         }
+    }
+    
+    private fun createFallbackConfig(): String {
+        val fallbackConfig = """
+            [general]
+            bars = 32
+            
+            [input]
+            method = pulse
+            source = auto
+            
+            [output]
+            method = raw
+            raw_target = ${when (Platform.os) {
+                Platform.OS.WINDOWS -> "CON"
+                else -> "/dev/stdout"
+            }}
+            data_format = ascii
+            ascii_max_range = 100
+            bar_delimiter = 59
+            frame_delimiter = 10
+        """.trimIndent()
+        
+        val tempConfigFile = File.createTempFile("cava_fallback_", ".conf")
+        tempConfigFile.deleteOnExit()
+        tempConfigFile.writeText(fallbackConfig)
+        
+        tempConfigPath = tempConfigFile.absolutePath
+        logger.info("Created fallback cava config at: $tempConfigPath")
+        return tempConfigPath!!
     }
 
     private fun isCavaAvailable(): Boolean {
