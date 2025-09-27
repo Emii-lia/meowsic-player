@@ -26,6 +26,7 @@ repositories {
     // IntelliJ Platform Gradle Plugin Repositories Extension - read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-repositories-extension.html
     intellijPlatform {
         defaultRepositories()
+        jetbrainsRuntime()
     }
 }
 
@@ -49,6 +50,9 @@ dependencies {
         bundledModules(providers.gradleProperty("platformBundledModules").map { it.split(',') })
 
         testFramework(TestFrameworkType.Platform)
+
+        pluginVerifier()
+        zipSigner()
     }
     testImplementation(kotlin("test"))
 }
@@ -106,7 +110,7 @@ intellijPlatform {
 
     pluginVerification {
         ides {
-            recommended()
+            create("IU", "2025.2")
         }
     }
 }
@@ -136,7 +140,12 @@ tasks {
     publishPlugin {
         dependsOn(patchChangelog)
     }
+
     buildSearchableOptions {
+        enabled = false
+    }
+
+    prepareJarSearchableOptions {
         enabled = false
     }
 }
