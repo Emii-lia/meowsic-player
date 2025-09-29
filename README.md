@@ -8,27 +8,40 @@
 Integrate music player and visualizer to your IDE
 
 ## Features
-- Track players and display the top first listed
-- Visualize audio
+- Track music players and display currently playing tracks
+- Audio visualization
 - Control playback (play/pause, next/previous track)
+- Album art display (Linux/Windows)
+- Global and local keyboard shortcuts
+- Automatic player detection and switching
 
 ## Usage
-The player daemon is using "playerctl" which is only available on Linux-based OS.
+The plugin supports cross-platform music control with different backends:
+- **Linux**: Uses "playerctl" for music control
+- **Windows**: Uses PowerShell Media.SoundPlayer integration
+- **macOS**: Uses AppleScript for music control
+
+### Setup Instructions:
 - Install the plugin
-- Make sure you have "playerctl" and "cava" installed
-- Open the music player tool window
+- **Linux users**: Install "playerctl" and "cava" for full functionality
+- **Windows/macOS users**: No additional dependencies required
+- Open the music player tool window (View → Tool Windows → Meowsic Player)
 - Start playing music using your favorite music player (e.g. Spotify, VLC, etc.)
-- Enjoy the music and the visualizer!
 
 ## Requirements
 
-This plugin uses the command line utilities [playerctl](https://github.com/altdesktop/playerctl) (Linux) to play music files ; and [cava](https://github.com/karlstav/cava) to display a visualizer.
-Please make sure that the respective utility is installed.
+### Linux
+- [playerctl](https://github.com/altdesktop/playerctl) - For music playback control
+- [cava](https://github.com/karlstav/cava) - For audio visualization
 
-Windows and macOS are not supported at the moment.
+### Windows & macOS
+- No additional dependencies required
+
+
+[![GitHub](https://img.shields.io/badge/Github-Meowsic_player-blue?logo=github)](https://github.com/Emii-lia/meowsic-player)
 <!-- Plugin description end -->
 
-## Sreenshot
+## Screenshot
 
 ![screenshot](./plugin_screenshot.png)
 
@@ -51,11 +64,23 @@ Windows and macOS are not supported at the moment.
   Download the [latest release](https://github.com/Emii-lia/jetbrain-music-player/releases/latest) and install it manually using
   <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Install plugin from disk...</kbd>
 
+## Keyboard Shortcuts
+
+### Global Shortcuts (work anywhere in IDE):
+- **Shift+Space**: Play/Pause music
+- **Alt+Period (.)**: Next track
+- **Alt+Comma (,)**: Previous track
+- **Shift+W**: Show/Hide Music Player tool window
+
+### Tool Window Local Shortcuts (when tool window is focused):
+- **Space**: Play/Pause music
+- **Right Arrow** or **N**: Next track
+- **Left Arrow** or **P**: Previous track
+
 ## To Do
-- [ ] Support for Windows and macOS
-- [ ] More playback controls (seek, volume, etc.)
-- [ ] More visualizer options
-- [ ] Track info display (album art, track length, etc.)
+- [ ] More playback controls (seek, volume, shuffle, repeat)
+- [ ] Customizable visualizer themes and styles
+- [ ] Playlist management
 
 ## Licence
 
