@@ -12,8 +12,6 @@ Integrate music player and visualizer to your IDE
 - Audio visualization
 - Control playback (play/pause, next/previous track)
 - Album art display (Linux/Windows)
-- Global and local keyboard shortcuts
-- Automatic player detection and switching
 
 ## Usage
 The plugin supports cross-platform music control with different backends:
@@ -23,16 +21,17 @@ The plugin supports cross-platform music control with different backends:
 
 ### Setup Instructions:
 - Install the plugin
-- **Linux users**: Install "playerctl" and "cava" for full functionality
-- **Windows/macOS users**: No additional dependencies required
+- Install ``cava`` for audio visualization.
+- **Linux**: Install ``playerctl`` for playback control.
 - Open the music player tool window (View → Tool Windows → Meowsic Player)
 - Start playing music using your favorite music player (e.g. Spotify, VLC, etc.)
 
 ## Requirements
 
+- [cava](https://github.com/karlstav/cava) - For audio visualization
+
 ### Linux
 - [playerctl](https://github.com/altdesktop/playerctl) - For music playback control
-- [cava](https://github.com/karlstav/cava) - For audio visualization
 
 ### Windows & macOS
 - No additional dependencies required
