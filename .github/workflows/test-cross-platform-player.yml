@@ -49,14 +49,14 @@ jobs:
       run: ./gradlew verifyPlugin --no-daemon
 
     - name: Upload test results
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       if: always()
       with:
         name: test-results-${{ matrix.os }}
         path: build/reports/tests/
 
     - name: Upload plugin artifact
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: plugin-${{ matrix.os }}
         path: build/distributions/
